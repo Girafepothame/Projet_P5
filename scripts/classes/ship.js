@@ -8,6 +8,7 @@ class Ship {
         this.speed = 5
 
         this.hp = 100
+        this.hpMax = 100
 
         this.trail = new Trail(w / 3, h)
     }
@@ -80,7 +81,20 @@ class Ship {
         this.drawShip()
 
         pop()
+        this.displayHealth()
     }
+
+    displayHealth() {
+        push()
+        noStroke()
+        fill(255)
+        let healthLength = map(this.hp, 0, this.hpMax, 0, width / 12.25)
+        healthLength = constrain(healthLength, 0, width / 12.25)
+        rect(width / 17.25, height / 12.75, healthLength, height / 75)
+        pop()
+    }
+
+      
 
     drawShip() {
         this.body()
