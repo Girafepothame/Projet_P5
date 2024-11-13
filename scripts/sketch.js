@@ -7,7 +7,7 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight)
-    ship = new Ship(width/2, height/2, 75)
+    ship = new Ship(width/2, height/2, 20, 30)
 }
 
 function draw() {
