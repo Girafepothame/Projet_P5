@@ -5,7 +5,7 @@ class Ship {
         this.w = w
         this.h = h
         this.angle = 0
-        this.speed = 5
+        this.speed = 7.5
 
         this.hp = 100
         this.hpMax = 100
