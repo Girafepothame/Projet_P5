@@ -1,7 +1,7 @@
 class Ship {
     constructor(x, y, w, h) {
-        this.position = createVector(x, y)
-        this.prevPosition = this.position.copy()
+        this.pos = createVector(x, y)
+        this.prevpos = this.pos.copy()
         this.w = w
         this.h = h
         this.angle = 0
@@ -11,14 +11,14 @@ class Ship {
     }
 
     update() {
-        let direction = createVector(mouseX - this.position.x, mouseY - this.position.y)
+        let direction = createVector(mouseX - this.pos.x, mouseY - this.pos.y)
         this.angle = lerp(this.angle, direction.heading(), 0.1)
 
         this.handleMovement()
 
-        this.trail.add(this.position.copy())
+        this.trail.add(this.pos.copy())
 
-        this.prevPosition = this.position.copy()
+        this.prevpos = this.pos.copy()
 
         this.edges()
     }
@@ -39,37 +39,37 @@ class Ship {
     }
 
     moveForward() {
-        this.position.x += cos(this.angle) * this.speed
-        this.position.y += sin(this.angle) * this.speed
+        this.pos.x += cos(this.angle) * this.speed
+        this.pos.y += sin(this.angle) * this.speed
     }
 
     moveBackward() {
-        this.position.x -= cos(this.angle) * this.speed
-        this.position.y -= sin(this.angle) * this.speed
+        this.pos.x -= cos(this.angle) * this.speed
+        this.pos.y -= sin(this.angle) * this.speed
     }
 
     moveLeft() {
         let leftDir = createVector(cos(this.angle - PI / 2), sin(this.angle - PI / 2))
-        this.position.x += leftDir.x * this.speed
-        this.position.y += leftDir.y * this.speed
+        this.pos.x += leftDir.x * this.speed
+        this.pos.y += leftDir.y * this.speed
     }
 
     moveRight() {
         let rightDir = createVector(cos(this.angle + PI / 2), sin(this.angle + PI / 2))
-        this.position.x += rightDir.x * this.speed
-        this.position.y += rightDir.y * this.speed
+        this.pos.x += rightDir.x * this.speed
+        this.pos.y += rightDir.y * this.speed
     }
 
     edges() {
-        this.position.x = (this.position.x + width) % width
-        this.position.y = (this.position.y + height) % height
+        this.pos.x = (this.pos.x + width) % width
+        this.pos.y = (this.pos.y + height) % height
     }
 
     draw() {
         this.trail.display(0, 0)
 
         push()
-        translate(this.position.x, this.position.y)
+        translate(this.pos.x, this.pos.y)
         rotate(this.angle + PI / 2)
 
         fill(255)
