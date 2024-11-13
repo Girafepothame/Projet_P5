@@ -1,4 +1,4 @@
-class enemy{
+class Enemy{
   
     constructor(size, x, y, type){
       if(type==1){
@@ -28,6 +28,19 @@ class enemy{
       rect(this.pos.x,this.pos.y,this.size*1.5)
   
       pop()
+    }
+
+
+    move(target){
+      let direction = p5.Vector.sub(target, this.pos);
+      direction.normalize()
+      direction.mult(this.speed);
+      
+      this.pos.add(direction);
+    }
+    
+    isOnTarget(target){
+      return p5.Vector.dist(this.pos,target)<this.speed;
     }
   }
   
