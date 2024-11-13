@@ -28,7 +28,7 @@ class Bullet {
     
     hits(entity) {
       let d = dist(this.pos.x, this.pos.y, entity.pos.x, entity.pos.y)
-      return d < entity.size
+      return d < entity.w
     }
   
     display() {

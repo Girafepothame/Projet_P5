@@ -1,18 +1,19 @@
 class Enemy{
   
-    constructor(size, x, y, type){
-      if(type==1){
-        this.hp = 10;
-        this.deathScore = 10;
-        this.size = size;
-        this.pos = createVector(x,y);
-        this.speed = 1;
-        this.angle = 10;
-        this.bullets = [];
-        this.color = color(255,132,132)
-        this.lastShootTime = 0;
-        this.shootInterval = 1000;
-      }
+  constructor(size, x, y, type) {
+    this.pos = createVector(x, y);
+    this.size = size;
+    
+    if(type==1){
+      this.hp = 10;
+      this.deathScore = 10;
+      this.speed = 1;
+      this.bullets = [];
+      this.color = color(255,132,132)
+      this.lastShootTime = 0;
+      this.shootInterval = random(2500, 3000);
+      this.damage = 10
+    }
       
     }  
     
@@ -43,16 +44,26 @@ class Enemy{
       
       this.pos.add(direction);
 
-      this.shoot(ship)
+      this.shoot(target)
       this.bullets.forEach(bullet => {
-        bullet.update();
-        bullet.display();
-      });
+        bullet.update()
+        bullet.display()
+        if (bullet.hits(target)) {
+          target.hp -= this.damage
+          bullet.lifespan = 0
+        }
+      })
+
+      if (this.isOnTarget(target)) {
+        console.log("ratio")
+        target.hp -= this.damage
+        this.hp = 0
+      }
 
     }
     
     isOnTarget(target){
-      return p5.Vector.dist(this.pos,target)<this.speed;
+      return dist(this.pos.x, this.pos.y, target.pos.x, target.pos.y) < this.size/2 + target.w/2;
     }
 
     shoot(target){

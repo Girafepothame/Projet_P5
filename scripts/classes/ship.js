@@ -7,12 +7,14 @@ class Ship {
         this.angle = 0
         this.speed = 5
 
+        this.hp = 100
+
         this.trail = new Trail(w / 3, h)
     }
 
     update() {
         let direction = createVector(mouseX - this.pos.x, mouseY - this.pos.y)
-        this.angle = lerp(this.angle, direction.heading(), 0.1)
+        this.angle = direction.heading()
 
         this.handleMovement()
 
