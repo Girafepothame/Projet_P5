@@ -1,5 +1,6 @@
 
 let ship
+let cannon
 let enemies = []
 
 let settings = {
@@ -15,7 +16,6 @@ let hexGrid
 function preload() {
 
 }
-
 
 function menuWaves(){
     background(30)
@@ -38,11 +38,12 @@ function setup() {
 
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
 
-    ship = new Ship(width/2, height/2, 20, 30)
+    ship = new Ship(width/2, height/2, 20, 45)
 
     for (let i = 0; i < 10; i++) {
         enemies.push(new Enemy(20, random(width), random(height), 1));
     }
+
     settings.menu = 1
 }
 
@@ -60,6 +61,7 @@ function draw() {
     
         ship.draw()
         ship.update()
+
     
         for(let i=0; i<enemies.length; i++) {
             enemies[i].draw()

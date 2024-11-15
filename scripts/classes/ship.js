@@ -1,28 +1,30 @@
 class Ship {
     constructor(x, y, w, h) {
-        this.pos = createVector(x, y)
+        this.pos = createVector(x, y)   // Position du vaisseau
         this.prevpos = this.pos.copy()
-        this.w = w
-        this.h = h
-        this.angle = 0
-        this.speed = 7.5
+        this.w = w                      // Largeur du vaisseau
+        this.h = h                      // Hauteur du vaisseau
+        this.angle = 0                  // Angle d'orientation du vaisseau
+        this.speed = 7.5                // Vitesse du vaisseau
 
         this.hp = 100
         this.hpMax = 100
 
         this.trail = new Trail(w / 3, h)
+
+        // Canons positionnés à gauche et à droite du vaisseau
+        this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.w, this.h/4)
+        this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, this.w, this.h/4)
     }
 
     update() {
         let direction = createVector(mouseX - this.pos.x, mouseY - this.pos.y)
-        this.angle = direction.heading()
+        this.angle = direction.heading()  // Orientation du vaisseau vers la souris
 
         this.handleMovement()
-
         this.trail.add(this.pos.copy())
 
         this.prevpos = this.pos.copy()
-
         this.edges()
     }
 
@@ -73,14 +75,19 @@ class Ship {
 
         push()
         translate(this.pos.x, this.pos.y)
-        rotate(this.angle + PI / 2)
+        rotate(this.angle + PI / 2)  // Rotation du vaisseau
 
         fill(255)
         stroke(255)
 
-        this.drawShip()
+        this.drawShip()  // Dessine le corps du vaisseau
 
         pop()
+
+        // Positionner et dessiner les canons en tenant compte de l'orientation du vaisseau
+        this.rightCannon.draw()
+        this.leftCannon.draw()
+
         this.displayHealth()
     }
 
@@ -93,8 +100,6 @@ class Ship {
         rect(width / 17.25, height / 12.75, healthLength, height / 75)
         pop()
     }
-
-      
 
     drawShip() {
         this.body()
