@@ -114,6 +114,20 @@ function drawButton(label, posY) {
 
 function mainMenu(){
     background(30)
+
+    hexRadius = 25
+
+    let hexWidth = sqrt(3) * hexRadius
+    let hexHeight = 2 * hexRadius
+
+    let cols = ceil(windowWidth / hexWidth)
+    let rows = ceil(windowHeight / hexHeight)
+
+    hexGrid = createGraphics(windowWidth, windowHeight)
+    drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
+
+    image(hexGrid, 0, 0)
+
     fill(255)
     textSize(width/50)
     text("Brain Damaged Blaster Drift", width/2 - textWidth("Brain Damaged Blaster Drift")/2, height/6)
@@ -153,9 +167,41 @@ function menuWaves(){
     text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
 }
 
+
+function menuDeath(){
+    background(30)
+    hexRadius = 25
+
+    let hexWidth = sqrt(3) * hexRadius
+    let hexHeight = 2 * hexRadius
+
+    let cols = ceil(windowWidth / hexWidth)
+    let rows = ceil(windowHeight / hexHeight)
+
+    hexGrid = createGraphics(windowWidth, windowHeight)
+    drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
+
+    image(hexGrid, 0, 0)
+    
+    fill(255)
+    textSize(width/50)
+    text("Vous êtes mort", width/2 - textWidth("Vous êtes mort")/2, height/4)
+    
+    buttons = [];
+    drawButton("M E N U", height * 0.35);
+}
+
 function setup() {
     createCanvas(windowWidth, windowHeight)
     textFont(assets.font);
+
+    enemies = []
+    settings.mode = 0
+    settings.score = 0
+    settings.waves = []
+    settings.wave = 0
+
+
     hexRadius = 25
 
     let hexWidth = sqrt(3) * hexRadius
@@ -176,6 +222,9 @@ function setup() {
 }
 
 function draw() {
+    if(ship.hp == 0) {
+        settings.mode = -1
+    }
     if(settings.mode == 0) {
         mainMenu()  
     } else {
@@ -185,19 +234,23 @@ function draw() {
                 settings.mode = 2
             }   
         } else {
-            background(30)
+            if(settings.mode == -1) {
+                menuDeath()
+            } else {
+                background(30)
 
-            image(hexGrid, 0, 0)
-        
-            ship.draw()
-            ship.update()
+                image(hexGrid, 0, 0)
+            
+                ship.draw()
+                ship.update()
 
-        
-            for(let i=0; i<enemies.length; i++) {
-                enemies[i].draw()
-                enemies[i].move(ship)
-                if (enemies[i].hp == 0) {
-                    enemies.splice(i, 1)
+            
+                for(let i=0; i<enemies.length; i++) {
+                    enemies[i].draw()
+                    enemies[i].move(ship)
+                    if (enemies[i].hp == 0) {
+                        enemies.splice(i, 1)
+                    }
                 }
             }
         }    
@@ -240,7 +293,7 @@ function drawHexagon(pg, x, y, radius) {
 
 
 function mousePressed() {
-    if (settings.mode === 0) {
+    if (settings.mode === 0 || settings.mode === -1) {
         for (let i = 0; i < buttons.length; i++) {
             if (
                 mouseX > buttons[i].x1 &&
@@ -250,6 +303,10 @@ function mousePressed() {
             ) {
                 if (buttons[i].label === "V A G U E S") {
                     settings.mode = 1;
+                }else{
+                    if (buttons[i].label === "M E N U") {
+                        setup()
+                    }
                 }
             }
         }
