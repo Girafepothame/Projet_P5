@@ -5,7 +5,7 @@ let enemies = []
 let mouseImage
 
 let settings = {
-    mode : 0,
+    mode : 0,      // -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
     score : 0,
     waves : [],
     wave : 0,
@@ -106,7 +106,7 @@ function drawButton(label, posY) {
         y2: posY + buttonHeight,
         label: label
     });
-  }
+}
 
 function mainMenu(){
     background(30)
@@ -118,22 +118,7 @@ function mainMenu(){
     drawButton("V A G U E S", height * 0.35);
 }
 
-function mousePressed() {
-    if (settings.mode === 0) {
-        for (let i = 0; i < buttons.length; i++) {
-            if (
-                mouseX > buttons[i].x1 &&
-                mouseX < buttons[i].x2 &&
-                mouseY > buttons[i].y1 &&
-                mouseY < buttons[i].y2
-            ) {
-                if (buttons[i].label === "V A G U E S") {
-                    settings.mode = 1;
-                }
-            }
-        }
-    }
-}
+
 
 function menuWaves(){
     background(30)
@@ -248,6 +233,23 @@ function drawHexagon(pg, x, y, radius) {
     pg.endShape(pg.CLOSE)
 }
 
+
+function mousePressed() {
+    if (settings.mode === 0) {
+        for (let i = 0; i < buttons.length; i++) {
+            if (
+                mouseX > buttons[i].x1 &&
+                mouseX < buttons[i].x2 &&
+                mouseY > buttons[i].y1 &&
+                mouseY < buttons[i].y2
+            ) {
+                if (buttons[i].label === "V A G U E S") {
+                    settings.mode = 1;
+                }
+            }
+        }
+    }
+}
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight)
