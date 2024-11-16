@@ -12,6 +12,10 @@ let settings = {
 
 }
 
+
+let assets = {
+    font: null
+}
 let buttonsMenu = []; // Stocker la position des boutons du menu
 
 let gameplay = {
@@ -23,8 +27,8 @@ let hexRadius
 let hexGrid
 
 function preload() {
-    mouseImage = loadImage("Img/mouse.svg")
-
+    mouseImage = loadImage("assets/Img/mouse.svg")
+    assets.font = loadFont('assets/fonts/menu.ttf');
 }
 
 function drawCursor() {
@@ -58,7 +62,7 @@ function drawKey(x,y, size, key, explanation){
     fill(0)
     noStroke()
     textAlign(CENTER, CENTER)
-    textSize(size/3)
+    textSize(size/6)
     text(key, x + size/2, y + size /2)
 
 
@@ -111,7 +115,7 @@ function drawButton(label, posY) {
 function mainMenu(){
     background(30)
     fill(255)
-    textSize(30)
+    textSize(width/50)
     text("Brain Damaged Blaster Drift", width/2 - textWidth("Brain Damaged Blaster Drift")/2, height/6)
     
     buttons = [];
@@ -143,7 +147,7 @@ function menuWaves(){
     image(mouseImage, centerX - imgSize/4, centerY + spacing*1.5, imgSize, imgSize)
 
 
-    textSize(size/3)
+    textSize(size/6)
 
     fill(255)
     text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
@@ -151,6 +155,7 @@ function menuWaves(){
 
 function setup() {
     createCanvas(windowWidth, windowHeight)
+    textFont(assets.font);
     hexRadius = 25
 
     let hexWidth = sqrt(3) * hexRadius
