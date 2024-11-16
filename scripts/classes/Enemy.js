@@ -11,7 +11,7 @@ class Enemy{
       this.speed = 1;
       this.bullets = [];
       this.color = color(255,132,132)
-      this.lastShootTime = 0;
+      this.lastShootTime = millis();
       this.shootInterval = random(2500, 3000);
       this.damage = 10
     }
