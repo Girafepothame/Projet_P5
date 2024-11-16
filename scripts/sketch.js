@@ -9,7 +9,15 @@ let settings = {
     score : 0,
     waves : [],
     wave : 0,
+
 }
+
+let buttonsMenu = []; // Stocker la position des boutons du menu
+
+let gameplay = {
+    cursor: { x: 0, y: 0 },
+};
+  
 
 let hexRadius
 let hexGrid
@@ -19,6 +27,23 @@ function preload() {
 
 }
 
+function drawCursor() {
+    push();
+
+    gameplay.cursor.x = lerp(gameplay.cursor.x, mouseX, 0.8);
+    gameplay.cursor.y = lerp(gameplay.cursor.y, mouseY, 0.8);
+  
+    fill(settings.mode === 2 ? [255, 200] : [255, 100]);
+    noStroke();
+    ellipse(gameplay.cursor.x, gameplay.cursor.y, settings.mode === 2 ? 5 : 20, settings.mode === 2 ? 5 : 20);
+    
+    if (settings.mode === 2) {
+      noFill();
+      stroke(255, 200);
+      ellipse(gameplay.cursor.x, gameplay.cursor.y, 30, 30);
+    }
+    pop();
+}
 
 function drawKey(x,y, size, key, explanation){
     push()
@@ -42,6 +67,72 @@ function drawKey(x,y, size, key, explanation){
     textAlign(CENTER, TOP)
     text(explanation, x + size/2, y + size*1.2)
     pop()
+}
+
+function drawButton(label, posY) {
+    let buttonWidth = width / 3;
+    let buttonHeight = height * 0.1;
+    
+    let isHovered = mouseX > width / 2 - buttonWidth / 2 && mouseX < width / 2 + buttonWidth / 2 && mouseY > posY && mouseY < posY + buttonHeight;
+
+    push()
+
+    if(isHovered){
+        fill(75)
+    } else {
+        noFill();
+    }
+
+  
+    stroke(255);
+    strokeWeight(5);
+    beginShape()
+    vertex(width / 2 - buttonWidth / 2 + buttonWidth / 10, posY)
+    vertex(width / 2 + buttonWidth / 2, posY)
+    vertex(width / 2 + buttonWidth / 2 - buttonWidth / 10, posY + buttonHeight)
+    vertex(width / 2 - buttonWidth / 2, posY + buttonHeight)
+    endShape(CLOSE)
+    fill(255);
+    noStroke()
+    textAlign(CENTER, CENTER);
+    text(label, width / 2, posY + buttonHeight / 2);
+  
+    pop()
+
+    buttons.push({
+        x1: width / 2 - buttonWidth / 2,
+        x2: width / 2 + buttonWidth / 2,
+        y1: posY,
+        y2: posY + buttonHeight,
+        label: label
+    });
+  }
+
+function mainMenu(){
+    background(30)
+    fill(255)
+    textSize(30)
+    text("Brain Damaged Blaster Drift", width/2 - textWidth("Brain Damaged Blaster Drift")/2, height/6)
+    
+    buttons = [];
+    drawButton("V A G U E S", height * 0.35);
+}
+
+function mousePressed() {
+    if (settings.mode === 0) {
+        for (let i = 0; i < buttons.length; i++) {
+            if (
+                mouseX > buttons[i].x1 &&
+                mouseX < buttons[i].x2 &&
+                mouseY > buttons[i].y1 &&
+                mouseY < buttons[i].y2
+            ) {
+                if (buttons[i].label === "V A G U E S") {
+                    settings.mode = 1;
+                }
+            }
+        }
+    }
 }
 
 function menuWaves(){
@@ -92,34 +183,38 @@ function setup() {
     for (let i = 0; i < 10; i++) {
         enemies.push(new Enemy(20, random(width), random(height), 1));
     }
-
-    settings.menu = 1
 }
 
 function draw() {
-
-    if(settings.menu == 1) {
-        menuWaves()
-        if (keyIsDown(32)) {
-            settings.menu = 2
-        }   
+    if(settings.mode == 0) {
+        mainMenu()  
     } else {
-        background(30)
+        if(settings.mode == 1) {
+            menuWaves()
+            if (keyIsDown(32)) {
+                settings.mode = 2
+            }   
+        } else {
+            background(30)
 
-        image(hexGrid, 0, 0)
-    
-        ship.draw()
-        ship.update()
+            image(hexGrid, 0, 0)
+        
+            ship.draw()
+            ship.update()
 
-    
-        for(let i=0; i<enemies.length; i++) {
-            enemies[i].draw()
-            enemies[i].move(ship)
-            if (enemies[i].hp == 0) {
-                enemies.splice(i, 1)
+        
+            for(let i=0; i<enemies.length; i++) {
+                enemies[i].draw()
+                enemies[i].move(ship)
+                if (enemies[i].hp == 0) {
+                    enemies.splice(i, 1)
+                }
             }
-        }
-    }    
+        }    
+    }
+    noCursor()
+    drawCursor()
+
 }
 
 function drawHexGrid(pg, cols, rows, hexWidth, hexHeight, hexRadius) {
