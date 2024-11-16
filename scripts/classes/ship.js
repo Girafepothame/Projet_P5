@@ -1,124 +1,140 @@
 class Ship {
     constructor(x, y, w, h) {
-        this.pos = createVector(x, y)   // Position du vaisseau
-        this.prevpos = this.pos.copy()
-        this.w = w                      // Largeur du vaisseau
-        this.h = h                      // Hauteur du vaisseau
-        this.angle = 0                  // Angle d'orientation du vaisseau
-        this.speed = 7.5                // Vitesse du vaisseau
+        this.pos = createVector(x, y);
+        this.w = w;
+        this.h = h;
+        this.angle = 0; // Initial angle
+        this.speed = 10;
+        this.velocity = createVector(0, 0);
+        this.acceleration = createVector(0, 0);
+        this.hp = 100;
+        this.hpMax = 100;
+        this.trail = new Trail(w / 3, h);
 
-        this.hp = 100
-        this.hpMax = 100
-
-        this.trail = new Trail(w / 3, h)
-
-        // Canons positionnés à gauche et à droite du vaisseau
-        this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.w, this.h/4)
-        this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, this.w, this.h/4)
+        this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.w, this.h / 4);
+        this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, this.w, this.h / 4);
     }
 
     update() {
-        let direction = createVector(mouseX - this.pos.x, mouseY - this.pos.y)
-        this.angle = direction.heading()  // Orientation du vaisseau vers la souris
+        // Direction towards the mouse
+        let direction = createVector(mouseX - this.pos.x, mouseY - this.pos.y);
+        let targetAngle = direction.heading(); // Angle towards the mouse
 
+        // Normalize angles to be between -PI and PI
+        targetAngle = this.normalizeAngle(targetAngle);
+        this.angle = this.normalizeAngle(this.angle); // Normalize current angle
+        
+        // Calculate the difference in angles and normalize it to the shortest path
+        let angleDiff = targetAngle - this.angle;
+
+        // Normalize angle difference to prevent crossing 180°
+        if (angleDiff > PI) {
+            angleDiff -= TWO_PI;
+        } else if (angleDiff < -PI) {
+            angleDiff += TWO_PI;
+        }
+
+        // Use lerp to smoothly transition the angle
+        this.angle = lerp(this.angle, this.angle + angleDiff, 0.1); // 0.1 can be adjusted for speed of rotation
+
+        // Handle movement
         this.handleMovement()
-        this.trail.add(this.pos.copy())
 
-        this.prevpos = this.pos.copy()
-        this.edges()
+        // Add velocity
+        this.velocity.add(this.acceleration);
+        this.pos.add(this.velocity);
+        this.acceleration.mult(0);
+
+        // Trail update
+        this.trail.add(this.pos.copy());
+
+        // Edge wrapping
+        this.edges();
     }
 
     handleMovement() {
-        if (keyIsDown(90)) {
-            this.moveForward()
-        }
-        if (keyIsDown(83)) {
-            this.moveBackward()
-        }
-        if (keyIsDown(81)) {
-            this.moveLeft()
-        }
-        if (keyIsDown(68)) {
-            this.moveRight()
-        }
+        if (keyIsDown(90)) this.moveForward()
+        if (keyIsDown(83)) this.moveBackward()
+        if (keyIsDown(81)) this.moveLeft()
+        if (keyIsDown(68)) this.moveRight()
     }
 
     moveForward() {
-        this.pos.x += cos(this.angle) * this.speed
-        this.pos.y += sin(this.angle) * this.speed
+        this.pos.add(p5.Vector.fromAngle(this.angle).mult(this.speed));
     }
 
     moveBackward() {
-        this.pos.x -= cos(this.angle) * this.speed
-        this.pos.y -= sin(this.angle) * this.speed
+        this.pos.sub(p5.Vector.fromAngle(this.angle).mult(this.speed));
     }
 
     moveLeft() {
-        let leftDir = createVector(cos(this.angle - PI / 2), sin(this.angle - PI / 2))
-        this.pos.x += leftDir.x * this.speed
-        this.pos.y += leftDir.y * this.speed
+        let leftDir = p5.Vector.fromAngle(this.angle - PI / 2).mult(this.speed);
+        this.pos.add(leftDir);
     }
 
     moveRight() {
-        let rightDir = createVector(cos(this.angle + PI / 2), sin(this.angle + PI / 2))
-        this.pos.x += rightDir.x * this.speed
-        this.pos.y += rightDir.y * this.speed
+        let rightDir = p5.Vector.fromAngle(this.angle + PI / 2).mult(this.speed);
+        this.pos.add(rightDir);
     }
 
     edges() {
-        this.pos.x = (this.pos.x + width) % width
-        this.pos.y = (this.pos.y + height) % height
+        this.pos.x = (this.pos.x + width) % width;
+        this.pos.y = (this.pos.y + height) % height;
+    }
+
+    // Normalize angles to always stay between -PI and PI
+    normalizeAngle(angle) {
+        return angle % TWO_PI;
     }
 
     draw() {
-        this.trail.display(0, 0)
+        this.trail.display(0, 0);
 
-        push()
-        translate(this.pos.x, this.pos.y)
-        rotate(this.angle + PI / 2)  // Rotation du vaisseau
+        push();
+        translate(this.pos.x, this.pos.y);
+        rotate(this.angle + PI / 2); // Rotate the ship according to the current angle
 
-        fill(255)
-        stroke(255)
+        fill(255);
+        stroke(255);
+        this.drawShip();
 
-        this.drawShip()  // Dessine le corps du vaisseau
+        pop();
 
-        pop()
+        this.rightCannon.draw();
+        this.leftCannon.draw();
+        
+        stroke(255, 0, 0)
+        line(this.pos.x, this.pos.y, mouseX, mouseY)
 
-        // Positionner et dessiner les canons en tenant compte de l'orientation du vaisseau
-        this.rightCannon.draw()
-        this.leftCannon.draw()
-
-        this.displayHealth()
+        this.displayHealth();
     }
 
     displayHealth() {
-        push()
-        noStroke()
-        fill(255)
-        let healthLength = map(this.hp, 0, this.hpMax, 0, width / 12.25)
-        healthLength = constrain(healthLength, 0, width / 12.25)
-        rect(width / 17.25, height / 12.75, healthLength, height / 75)
-        pop()
+        push();
+        noStroke();
+        fill(255);
+        let healthLength = map(this.hp, 0, this.hpMax, 0, width / 12.25);
+        healthLength = constrain(healthLength, 0, width / 12.25);
+        rect(width / 17.25, height / 12.75, healthLength, height / 75);
+        pop();
     }
 
     drawShip() {
-        this.body()
+        this.body();
     }
 
     body() {
-        beginShape()
-        vertex(0, -this.h * 0.8)
-        vertex(0 + this.w / 2, 0)
+        beginShape();
+        vertex(0, -this.h * 0.8);
+        vertex(this.w / 2, 0);
+        vertex(this.w / 4, 0);
+        vertex(0, this.h * 0.2);
+        vertex(-this.w / 4, 0);
+        vertex(-this.w / 2, 0);
+        endShape(CLOSE);
 
-        vertex(0 + this.w / 4, 0)
-        vertex(0, 0 + this.h * 0.2)
-        vertex(0 - this.w / 4, 0)
-
-        vertex(0 - this.w / 2, 0)
-        endShape(CLOSE)
-
-        strokeWeight(5)
-        stroke(255, 0, 0)
-        point(0, 0)
+        strokeWeight(5);
+        stroke(255, 0, 0);
+        point(0, 0);
     }
 }
