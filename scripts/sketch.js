@@ -2,6 +2,7 @@
 let ship
 let cannon
 let enemies = []
+let mouseImage
 
 let settings = {
     mode : 0,
@@ -14,14 +15,62 @@ let hexRadius
 let hexGrid
 
 function preload() {
+    mouseImage = loadImage("Img/mouse.svg")
 
+}
+
+
+function drawKey(x,y, size, key, explanation){
+    push()
+
+    // Touche
+    fill(255)
+    stroke(0)
+    strokeWeight(2)
+    rect(x, y, size,size, 5)
+
+    // Texte touche
+    fill(0)
+    noStroke()
+    textAlign(CENTER, CENTER)
+    textSize(size/3)
+    text(key, x + size/2, y + size /2)
+
+
+    // Texte explication
+    fill(255)
+    textAlign(CENTER, TOP)
+    text(explanation, x + size/2, y + size*1.2)
+    pop()
 }
 
 function menuWaves(){
     background(30)
     fill(255)
     textSize(30)
-    text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/2)
+    text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
+    
+    
+    // Controles
+    let size =  min(width, height) / 15
+    let spacing = size * 2
+
+    let centerX = width / 2
+    let centerY = height / 2
+
+    drawKey(centerX, centerY - spacing, size, "Z", "Avancer")
+    drawKey(centerX - spacing, centerY, size, "Q", "Gauche")
+    drawKey(centerX, centerY, size, "S", "Reculer")
+    drawKey(centerX + spacing, centerY, size, "D", "Droite")
+
+    let imgSize = size * 1.5
+    image(mouseImage, centerX - imgSize/4, centerY + spacing*1.5, imgSize, imgSize)
+
+
+    textSize(size/3)
+
+    fill(255)
+    text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
 }
 
 function setup() {
@@ -105,3 +154,6 @@ function drawHexagon(pg, x, y, radius) {
 }
 
 
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight)
+}
