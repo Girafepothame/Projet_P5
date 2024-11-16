@@ -258,4 +258,16 @@ function mousePressed() {
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight)
+
+    hexRadius = 25
+
+    let hexWidth = sqrt(3) * hexRadius
+    let hexHeight = 2 * hexRadius
+
+    let cols = ceil(windowWidth / hexWidth)
+    let rows = ceil(windowHeight / hexHeight)
+
+    hexGrid = createGraphics(windowWidth, windowHeight)
+    drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
+
 }
