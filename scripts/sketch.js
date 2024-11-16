@@ -115,17 +115,6 @@ function drawButton(label, posY) {
 function mainMenu(){
     background(30)
 
-    hexRadius = 25
-
-    let hexWidth = sqrt(3) * hexRadius
-    let hexHeight = 2 * hexRadius
-
-    let cols = ceil(windowWidth / hexWidth)
-    let rows = ceil(windowHeight / hexHeight)
-
-    hexGrid = createGraphics(windowWidth, windowHeight)
-    drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
-
     image(hexGrid, 0, 0)
 
     fill(255)
@@ -170,19 +159,9 @@ function menuWaves(){
 
 function menuDeath(){
     background(30)
-    hexRadius = 25
-
-    let hexWidth = sqrt(3) * hexRadius
-    let hexHeight = 2 * hexRadius
-
-    let cols = ceil(windowWidth / hexWidth)
-    let rows = ceil(windowHeight / hexHeight)
-
-    hexGrid = createGraphics(windowWidth, windowHeight)
-    drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
 
     image(hexGrid, 0, 0)
-    
+
     fill(255)
     textSize(width/50)
     text("Vous êtes mort", width/2 - textWidth("Vous êtes mort")/2, height/4)
