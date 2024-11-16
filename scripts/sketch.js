@@ -5,7 +5,7 @@ let enemies = []
 let mouseImage
 
 let settings = {
-    mode : 0,      // -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
+    mode : 0,      // -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
     score : 0,
     waves : [],
     wave : 0,
@@ -14,21 +14,33 @@ let settings = {
 
 
 let assets = {
-    font: null
+    font: null,
+    gameMusics: [],
 }
 let buttonsMenu = []; // Stocker la position des boutons du menu
 
 let gameplay = {
+    currentSongIndex: 0,
+    volumeMusic : 25,
     cursor: { x: 0, y: 0 },
 };
-  
+
+let volumeSlider
+
 
 let hexRadius
 let hexGrid
 
+
 function preload() {
     mouseImage = loadImage("assets/Img/mouse.svg")
     assets.font = loadFont('assets/fonts/menu.ttf');
+
+    soundFormats("mp3");
+    assets.gameMusics = [
+        loadSound('assets/musics/01.mp3'),
+    ];
+
 }
 
 function drawCursor() {
@@ -123,6 +135,8 @@ function mainMenu(){
     
     buttons = [];
     drawButton("V A G U E S", height * 0.35);
+    drawButton("P A R A M E T R E S", height * 0.55);
+
 }
 
 
@@ -170,9 +184,62 @@ function menuDeath(){
     drawButton("M E N U", height * 0.35);
 }
 
+
+function menuSettings(){
+    background(30)
+    image(hexGrid, 0, 0)
+
+    fill(255)
+    textSize(width/50)
+    text("Paramètres", width/2 - textWidth("Paramètres")/2, height/4)
+    
+    buttons = [];
+    drawButton("M E N U", height * 0.35);
+
+    let space = height/15
+
+    // Volume
+    if(!volumeSlider){
+        fill(255)
+        textSize(width/50)
+        volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
+        volumeSlider.position(width/2 - volumeSlider.width/2, height/2 + space);
+    }
+    if(assets.gameMusics[gameplay.currentSongIndex].isPlaying()){
+        assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value()/100)
+    }
+
+    gameplay.volumeMusic = volumeSlider.value()
+
+    fill(255)
+    textSize(width/50)
+    text(`Volume : ${volumeSlider.value()}`, width/2 - textWidth(`Volume : ${volumeSlider.value()}`)/2, height/2 + space *2)
+}
+
+
+
+
+function playSong() {
+    if (gameplay.currentSongIndex < assets.gameMusics.length) {
+      assets.gameMusics[gameplay.currentSongIndex].play();
+      assets.gameMusics[gameplay.currentSongIndex].setVolume(gameplay.volumeMusic/100);
+      assets.gameMusics[gameplay.currentSongIndex].onended(nextSong);
+    }
+}
+
+function nextSong() {
+    gameplay.currentSongIndex = (gameplay.currentSongIndex + 1) % assets.gameMusics.length;
+    playSong();
+}
 function setup() {
     createCanvas(windowWidth, windowHeight)
     textFont(assets.font);
+
+    if (volumeSlider) {
+        volumeSlider.remove();
+        volumeSlider = null;
+    }
+    assets.gameMusics = shuffle(assets.gameMusics);
 
     enemies = []
     settings.mode = 0
@@ -216,19 +283,23 @@ function draw() {
             if(settings.mode == -1) {
                 menuDeath()
             } else {
-                background(30)
+                if(settings.mode == -2) {
+                    menuSettings()
+                } else {
+                    background(30)
 
-                image(hexGrid, 0, 0)
-            
-                ship.draw()
-                ship.update()
+                    image(hexGrid, 0, 0)
+                
+                    ship.draw()
+                    ship.update()
 
-            
-                for(let i=0; i<enemies.length; i++) {
-                    enemies[i].draw()
-                    enemies[i].move(ship)
-                    if (enemies[i].hp == 0) {
-                        enemies.splice(i, 1)
+                
+                    for(let i=0; i<enemies.length; i++) {
+                        enemies[i].draw()
+                        enemies[i].move(ship)
+                        if (enemies[i].hp == 0) {
+                            enemies.splice(i, 1)
+                        }
                     }
                 }
             }
@@ -272,7 +343,11 @@ function drawHexagon(pg, x, y, radius) {
 
 
 function mousePressed() {
-    if (settings.mode === 0 || settings.mode === -1) {
+    if(getAudioContext().state !== 'running') {
+        getAudioContext().resume();
+        playSong();
+    }
+    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2) {
         for (let i = 0; i < buttons.length; i++) {
             if (
                 mouseX > buttons[i].x1 &&
@@ -285,6 +360,10 @@ function mousePressed() {
                 }else{
                     if (buttons[i].label === "M E N U") {
                         setup()
+                    }else{
+                        if (buttons[i].label === "P A R A M E T R E S") {
+                            settings.mode = -2;
+                        }
                     }
                 }
             }
