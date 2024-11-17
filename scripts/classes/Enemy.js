@@ -1,20 +1,19 @@
 class Enemy{
   
-  constructor(size, x, y, type) {
+  constructor(size, x, y, hp, ds, sd, dg){ 
     this.pos = createVector(x, y);
     this.size = size;
     this.angle = 0
     
-    if(type==1){
-      this.hp = 10;
-      this.deathScore = 10;
-      this.speed = 1;
-      this.bullets = [];
-      this.color = color(255,132,132)
-      this.lastShotTime = millis();
-      this.shootInterval = random(2500, 3000);
-      this.damage = 10
-    }
+    this.hp = hp;
+    this.deathScore = ds;
+    this.speed = sd;
+    this.bullets = [];
+    this.color = color(255,132,132)
+    this.lastShotTime = millis();
+    this.shootInterval = random(2500, 3000);
+    this.damage = dg
+    
       
   }
     

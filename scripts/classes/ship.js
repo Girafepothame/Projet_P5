@@ -54,8 +54,6 @@ class Ship {
         // Edge wrapping
         this.edges();
 
-        console.log(this.bullets.length)
-
         
     }
 

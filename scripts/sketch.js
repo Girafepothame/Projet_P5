@@ -6,10 +6,7 @@ let mouseImage
 
 let settings = {
     mode : 0,      // -3 menu pause , -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
-    score : 0,
-    waves : [],
-    wave : 0,
-
+    spawnInterval: 500,
 }
 
 
@@ -21,8 +18,15 @@ let buttonsMenu = []; // Stocker la position des boutons du menu
 
 let gameplay = {
     currentSongIndex: 0,
+    score : 0,
     volumeMusic : 25,
     cursor: { x: 0, y: 0 },
+    wave : 0,
+    nbEnemiesMax : 3,
+    nbEnemies : 0,
+    hpEnemies : 10,
+    damageEnemies : 10,
+    speedEnemies : 1,
 };
 
 let volumeSlider
@@ -270,14 +274,10 @@ function setup() {
         volumeSlider = null;
     }
     assets.gameMusics = shuffle(assets.gameMusics);
+    ship = new Ship(width/2, height/2, 20, 45)
 
-    enemies = []
+   
     settings.mode = 0
-    settings.score = 0
-    settings.waves = []
-    settings.wave = 0
-
-
     hexRadius = 25
 
     let hexWidth = sqrt(3) * hexRadius
@@ -290,12 +290,46 @@ function setup() {
 
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
 
-    ship = new Ship(width/2, height/2, 20, 45)
 
-    for (let i = 0; i < 10; i++) {
-        enemies.push(new Enemy(20, random(width), random(height), 1));
-    }
     
+}
+
+function spawnEnemy(){
+    if(gameplay.nbEnemies < gameplay.nbEnemiesMax){
+        let x, y;
+        let side = floor(random(4));
+        if (side === 0) { // Côté gauche
+            x = -20;
+            y = random(height);
+        } else if (side === 1) { // Côté droit
+            x = width + 20;
+            y = random(height);
+        } else if (side === 2) { // Côté haut
+            x = random(width);
+            y = -20;
+        } else if (side === 3) { // Côté bas
+            x = random(width);
+            y = height + 20;
+        }
+
+        enemies.push(new Enemy(20, x, y, gameplay.hpEnemies,gameplay.hpEnemies,gameplay.speedEnemies,gameplay.damageEnemies));
+        gameplay.nbEnemies++
+    }
+}
+
+function startGameWave(){
+    enemies = []
+    gameplay.score = 0
+    gameplay.wave = 1
+    gameplay.nbEnemies = 0
+    gameplay.nbEnemiesMax = 3
+    gameplay.hpEnemies = 10
+    gameplay.damageEnemies = 10
+    gameplay.speedEnemies = 1
+   
+    spawnEnemy()
+    setInterval(spawnEnemy, settings.spawnInterval)
+
 }
 
 function draw() {
@@ -315,6 +349,7 @@ function draw() {
         if(settings.mode == 1) {
             menuWaves()
             if (keyIsDown(32)) {  // space
+                startGameWave()
                 settings.mode = 2
             }   
         } else {
@@ -330,7 +365,9 @@ function draw() {
                         background(30)
 
                         image(hexGrid, 0, 0)
-                    
+                        text(`Score : ${gameplay.score}`, width/18, height/8)
+                        text(`Vagues : ${gameplay.wave}`, width/1.15, height/8)
+
                         ship.draw()
                         ship.update()
 
@@ -339,8 +376,26 @@ function draw() {
                             enemies[i].draw()
                             enemies[i].move(ship)
                             if (enemies[i].hp <= 0) {
+                                gameplay.score += enemies[i].deathScore
                                 enemies.splice(i, 1)
                             }
+                        }
+
+                        if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
+                            gameplay.wave++
+                            gameplay.nbEnemies = 0
+                            gameplay.nbEnemiesMax += 2
+
+                            if(gameplay.wave % 4 === 0){
+                                gameplay.hpEnemies += 5
+                            }
+                            if(gameplay.wave % 5 === 0){
+                                gameplay.damageEnemies += 5
+
+                            }
+                            if(gameplay.wave % 6 === 0){
+                                gameplay.speedEnemies += 0.5
+                            }                          
                         }
                     }
                 }
