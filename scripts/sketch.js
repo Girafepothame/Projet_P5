@@ -7,6 +7,7 @@ let mouseImage
 let settings = {
     mode : 0,      // -3 menu pause , -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
     spawnInterval: 500,
+    colorShip : null,
 }
 
 
@@ -220,7 +221,8 @@ function menuPause(){
     
 }
 
-
+let colorPickerDiv;
+let colorPicker;
 function menuSettings(){
     background(30)
     image(hexGrid, 0, 0)
@@ -235,9 +237,9 @@ function menuSettings(){
     let space = height/15
 
     // Volume
+    fill(255)
+    textSize(width/50)
     if(!volumeSlider){
-        fill(255)
-        textSize(width/50)
         volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
     }
     volumeSlider.position(width/2 - volumeSlider.width/2, height/2 + space);
@@ -251,6 +253,27 @@ function menuSettings(){
     fill(255)
     textSize(width/50)
     text(`Volume : ${volumeSlider.value()}`, width/2 - textWidth(`Volume : ${volumeSlider.value()}`)/2, height/2 + space *2)
+
+    if (!colorPickerDiv) {
+        colorPickerDiv = createDiv();
+    }
+
+    colorPickerDiv.position(width / 2 - 25, height / 2 + space * 3);
+    colorPickerDiv.style('z-index', '10');
+    colorPickerDiv.style('position', 'absolute');
+    
+    if (!colorPicker) {
+        colorPicker = createColorPicker(settings.colorShip);
+    }
+    colorPickerDiv.child(colorPicker);
+
+    colorPicker.style('width', `${width/20}px`);
+    colorPicker.style('height', `${height/20}px`);
+    colorPicker.style('background-color', 'transparent');
+    colorPicker.style('border', 'none');
+    settings.colorShip = colorPicker.color()
+
+    text(`Couleur vaisseau`, width/2 - textWidth(`Couleur vaisseau`)/2, height/2 + space *4)
 }
 
 
@@ -276,8 +299,22 @@ function setup() {
         volumeSlider.remove();
         volumeSlider = null;
     }
+
+    if(colorPicker){
+        colorPicker.remove();
+        colorPicker = null;
+    }
+    
+    if(settings.colorShip === null){
+        settings.colorShip = color(255,255,255)
+    }
+
+    if (colorPickerDiv) {
+        colorPickerDiv.remove();
+        colorPickerDiv = null;
+    }
     assets.gameMusics = shuffle(assets.gameMusics);
-    ship = new Ship(width/2, height/2, 20, 45)
+    ship = new Ship(width/2, height/2, 20, 45);
 
    
     settings.mode = 0

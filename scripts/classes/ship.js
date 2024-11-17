@@ -99,7 +99,7 @@ class Ship {
         translate(this.pos.x, this.pos.y);
         rotate(this.angle); // Rotate the ship according to the current angle
 
-        fill(255);
+        fill(settings.colorShip);
         stroke(255);
         this.drawShip();
 
