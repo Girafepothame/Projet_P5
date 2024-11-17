@@ -452,6 +452,8 @@ function spawnEnemyBoss(){
     }
 }
 
+let intervalGame
+
 function startGameBoss(){
     enemies = []
     gameplay.score = 0
@@ -464,9 +466,9 @@ function startGameBoss(){
         gameplay.damageEnemies = 10
         gameplay.speedEnemies = 1
         settings.spawnInterval = 500
-        gameplay.boss = new boss(50, random(width), random(height),[], 50, 0, 1)
+        gameplay.boss = new boss(50, random(width), random(height),[], 50, 1, 1)
         spawnEnemyBoss()
-        setInterval(spawnEnemyBoss, settings.spawnInterval)
+        intervalGame = setInterval(spawnEnemyBoss, settings.spawnInterval)
     }else{
         if(gameplay.difficulty === 2){
             gameplay.nbEnemiesMax = 50
@@ -474,11 +476,11 @@ function startGameBoss(){
             gameplay.damageEnemies = 15
             gameplay.speedEnemies = 1.5
             settings.spawnInterval = 3000
-            gameplay.boss = new boss(75, random(width), random(height),[], 100, 0, 2)
+            gameplay.boss = new boss(75, random(width), random(height),[], 100, 5, 2)
             for(let i = 0; i < 5; i++){
                 spawnEnemyBoss()
             }
-            setInterval(spawnEnemyBoss, settings.spawnInterval)
+            intervalGame = setInterval(spawnEnemyBoss, settings.spawnInterval)
         }else{
             if(gameplay.difficulty === 3){
                 gameplay.nbEnemiesMax = 100
@@ -486,18 +488,17 @@ function startGameBoss(){
                 gameplay.damageEnemies = 50
                 gameplay.speedEnemies = 2
                 settings.spawnInterval = 3000
-                gameplay.boss = new boss(50, random(width), random(height),[], 150, 0, 3)
+                gameplay.boss = new boss(50, random(width), random(height),[], 150, 10, 3)
                 for(let i = 0; i < 5; i++){
                     spawnEnemyBoss()
                 }
-                setInterval(spawnEnemyBoss, settings.spawnInterval)
+                intervalGame = setInterval(spawnEnemyBoss, settings.spawnInterval)
             }
         }
     }
     
 
 }
-
 
 function startGameWave(){
     enemies = []
@@ -511,7 +512,7 @@ function startGameWave(){
     settings.spawnInterval = 500
    
     spawnEnemy()
-    setInterval(spawnEnemy, settings.spawnInterval)
+    intervalGame = setInterval(spawnEnemy, settings.spawnInterval)
 
 }
 
@@ -526,6 +527,14 @@ function draw() {
             buttonPause = null;
         }
     }
+
+    if(settings.mode != 4 && settings.mode != 2 && settings.mode != -3 && settings.mode != -4) {
+        if (intervalGame) {
+            clearInterval(intervalGame);
+            intervalGame = null;
+        }
+    }
+
     if(settings.mode == 0) {
         mainMenu()  
     } else {
@@ -590,13 +599,7 @@ function draw() {
                             }else{
 
                                 gameplay.boss.draw()
-                                for(let i=0; i<gameplay.boss.tabEnemy.length; i++) {
-                                    gameplay.boss.tabEnemy[i].draw()
-                                    gameplay.boss.tabEnemy[i].move(ship)
-                                    if (gameplay.boss.tabEnemy[i].hp <= 0) {
-                                        gameplay.boss.tabEnemy.splice(i, 1)
-                                    }
-                                }
+                                gameplay.boss.action(ship)
 
                                 
                             }
