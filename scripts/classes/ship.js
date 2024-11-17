@@ -13,7 +13,7 @@ class Ship {
 
         this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, -this.w);
         this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, this.w);
-        
+
         this.bullets = []
         this.damage = 10
     }
@@ -94,7 +94,7 @@ class Ship {
         return angle % TWO_PI;
     }
 
-    draw(enemies) {
+    draw() {
         this.trail.display(0, 0);
 
         push();

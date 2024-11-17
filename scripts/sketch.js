@@ -368,7 +368,6 @@ function drawHexGrid(pg, cols, rows, hexWidth, hexHeight, hexRadius) {
     }
 }
 
-
 function drawHexagon(pg, x, y, radius) {
     pg.beginShape()
     pg.noStroke()
