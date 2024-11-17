@@ -5,7 +5,7 @@ let enemies = []
 let mouseImage
 
 let settings = {
-    mode : 0,      // -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
+    mode : 0,      // -3 menu pause , -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
     score : 0,
     waves : [],
     wave : 0,
@@ -30,7 +30,7 @@ let volumeSlider
 
 let hexRadius
 let hexGrid
-
+let buttonPause 
 
 function preload() {
     mouseImage = loadImage("assets/Img/mouse.svg")
@@ -139,26 +139,18 @@ function mainMenu(){
 
 }
 
-
-
-function menuWaves(){
-    background(30)
-    fill(255)
-    textSize(30)
-    text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
-    
-    
+function showControls(size, centerX, centerY){
     // Controles
-    let size =  min(width, height) / 15
     let spacing = size * 2
 
-    let centerX = width / 2
-    let centerY = height / 2
-
+  
     drawKey(centerX, centerY - spacing, size, "Z", "Avancer")
     drawKey(centerX - spacing, centerY, size, "Q", "Gauche")
     drawKey(centerX, centerY, size, "S", "Reculer")
     drawKey(centerX + spacing, centerY, size, "D", "Droite")
+
+    drawKey(centerX + spacing, centerY - spacing*2, size, "P", "Pause")
+
 
     let imgSize = size * 1.5
     image(mouseImage, centerX - imgSize/4, centerY + spacing*1.5, imgSize, imgSize)
@@ -168,6 +160,20 @@ function menuWaves(){
 
     fill(255)
     text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
+}
+
+function menuWaves(){
+    background(30)
+    fill(255)
+    textSize(30)
+    text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
+    let size =  min(width, height) / 15
+    let centerX = width / 2
+    let centerY = height / 2
+
+    showControls(size, centerX, centerY)
+    
+   
 }
 
 
@@ -182,6 +188,29 @@ function menuDeath(){
     
     buttons = [];
     drawButton("M E N U", height * 0.35);
+}
+
+
+function menuPause(){
+    background(30)
+
+
+    fill(255)
+    textSize(width/50)
+    text("Pause", width/2 - textWidth("Pause")/2, height/4)
+    
+    buttons = [];
+    drawButton("M E N U", height * 0.35);
+    buttonPause.style('font-size', `${width/50}px`)
+
+    buttonPause.position(width/2 - buttonPause.width/1.5, height/2)
+    let size =  min(width, height) / 20
+    let centerX = width / 6
+    let centerY = height / 2
+
+    showControls(size, centerX, centerY)
+
+    
 }
 
 
@@ -265,11 +294,19 @@ function setup() {
     for (let i = 0; i < 10; i++) {
         enemies.push(new Enemy(20, random(width), random(height), 1));
     }
+    
 }
 
 function draw() {
     if(ship.hp == 0) {
         settings.mode = -1
+    }
+
+    if(settings.mode != -3) {
+        if (buttonPause) {
+            buttonPause.remove();
+            buttonPause = null;
+        }
     }
     if(settings.mode == 0) {
         mainMenu()  
@@ -286,19 +323,23 @@ function draw() {
                 if(settings.mode == -2) {
                     menuSettings()
                 } else {
-                    background(30)
+                    if(settings.mode == -3) {
+                        menuPause()
+                    } else {
+                        background(30)
 
-                    image(hexGrid, 0, 0)
-                
-                    ship.draw()
-                    ship.update()
+                        image(hexGrid, 0, 0)
+                    
+                        ship.draw()
+                        ship.update()
 
-                
-                    for(let i=0; i<enemies.length; i++) {
-                        enemies[i].draw()
-                        enemies[i].move(ship)
-                        if (enemies[i].hp == 0) {
-                            enemies.splice(i, 1)
+                    
+                        for(let i=0; i<enemies.length; i++) {
+                            enemies[i].draw()
+                            enemies[i].move(ship)
+                            if (enemies[i].hp == 0) {
+                                enemies.splice(i, 1)
+                            }
                         }
                     }
                 }
@@ -347,7 +388,7 @@ function mousePressed() {
         getAudioContext().resume();
         playSong();
     }
-    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2) {
+    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3) {
         for (let i = 0; i < buttons.length; i++) {
             if (
                 mouseX > buttons[i].x1 &&
@@ -367,6 +408,31 @@ function mousePressed() {
                     }
                 }
             }
+        }
+    }
+}
+
+
+function keyPressed(){
+    if(settings.mode === 2){
+        if(key === "p" || key === "P"){
+            settings.mode = -3
+            buttonPause = createButton("Reprendre partie")
+            buttonPause.style('background-color', 'rgba(0,0,0,0)')
+            buttonPause.style('color', 'white')
+            buttonPause.style('font-family', 'arial')
+            buttonPause.style('border', '3px solid white')
+            buttonPause.style('padding', `${width/50}px`)
+
+            buttonPause.mouseOver(() => {
+                buttonPause.style('background-color', 'rgba(75,75,75)')
+            })
+            buttonPause.mouseOut(() => {
+                buttonPause.style('background-color', 'rgba(0,0,0,0)')
+            })
+            buttonPause.mousePressed(() => {
+                settings.mode = 2
+            })
         }
     }
 }
