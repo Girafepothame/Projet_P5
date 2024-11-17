@@ -1,11 +1,12 @@
 class Bullet {
-  constructor(pos, direction, w, h, speed, lifespan) {
+  constructor(pos, direction, w, h, speed, lifespan, color) {
     this.h = h
     this.w = w
     this.speed = speed
     this.pos = pos.copy()
     this.direction = createVector(direction.x - pos.x, direction.y - pos.y).heading()
     this.lifespan = lifespan
+    this.color = color;
   }
 
   update() {
@@ -28,6 +29,7 @@ class Bullet {
     translate(this.pos.x, this.pos.y)
     rotate(this.direction)
     rectMode(CENTER)
+    fill(this.color)
     rect(0, 0, this.h, this.w)
 
     strokeWeight(2)
