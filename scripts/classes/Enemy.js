@@ -11,7 +11,7 @@ class Enemy{
       this.speed = 1;
       this.bullets = [];
       this.color = color(255,132,132)
-      this.lastShootTime = millis();
+      this.lastShotTime = millis();
       this.shootInterval = random(2500, 3000);
       this.damage = 10
     }
@@ -28,6 +28,7 @@ class Enemy{
     fill(255)
     noStroke()
     rect(0, 0,this.size)
+    text(this.hp, 0, 0)
     
     noFill()
     stroke(this.color)
@@ -59,9 +60,15 @@ class Enemy{
     })
 
     if (this.isOnTarget(target)) {
-      console.log("ratio")
       target.hp -= this.damage
       this.hp = 0
+    }
+
+    for(let targetBullet of target.bullets) {
+      if (this.isOnTarget(targetBullet)) {
+        this.hp -= target.damage
+        targetBullet.lifespan = 0
+      }
     }
 
   }
@@ -71,9 +78,9 @@ class Enemy{
   }
 
   shoot(target){
-    if(millis() - this.lastShootTime > this.shootInterval){
+    if(millis() - this.lastShotTime > this.shootInterval){
       this.bullets.push(new Bullet(this.pos, target.pos, 5, 15, 10, 10000))
-      this.lastShootTime = millis()
+      this.lastShotTime = millis()
     }
   }
 }

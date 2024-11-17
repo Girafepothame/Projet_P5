@@ -11,8 +11,11 @@ class Ship {
         this.hpMax = 100;
         this.trail = new Trail(w / 3, h);
 
-        this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.w, this.h / 4);
-        this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, this.w, this.h / 4);
+        this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, -this.w);
+        this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, this.w);
+        
+        this.bullets = []
+        this.damage = 10
     }
 
     update() {
@@ -50,6 +53,10 @@ class Ship {
 
         // Edge wrapping
         this.edges();
+
+        console.log(this.bullets.length)
+
+        
     }
 
     handleMovement() {
@@ -87,12 +94,12 @@ class Ship {
         return angle % TWO_PI;
     }
 
-    draw() {
+    draw(enemies) {
         this.trail.display(0, 0);
 
         push();
         translate(this.pos.x, this.pos.y);
-        rotate(this.angle + PI / 2); // Rotate the ship according to the current angle
+        rotate(this.angle); // Rotate the ship according to the current angle
 
         fill(255);
         stroke(255);
@@ -100,13 +107,22 @@ class Ship {
 
         pop();
 
-        this.rightCannon.draw();
         this.leftCannon.draw();
+        this.rightCannon.draw();
         
         stroke(255, 0, 0)
         line(this.pos.x, this.pos.y, mouseX, mouseY)
 
         this.displayHealth();
+
+        this.bullets.forEach(bullet => {
+            bullet.update()
+            bullet.display()
+        })
+
+        this.bullets = this.bullets.filter(bullet => {
+            return bullet.lifespan > 0 && !bullet.isOffScreen()
+        })
     }
 
     displayHealth() {
@@ -125,12 +141,12 @@ class Ship {
 
     body() {
         beginShape();
-        vertex(0, -this.h * 0.8);
-        vertex(this.w / 2, 0);
-        vertex(this.w / 4, 0);
-        vertex(0, this.h * 0.2);
-        vertex(-this.w / 4, 0);
-        vertex(-this.w / 2, 0);
+        vertex(this.h * 0.8, 0);  // Inversé (x et y)
+        vertex(0, this.w / 2);     // Inversé (x et y)
+        vertex(0, this.w / 4);     // Inversé (x et y)
+        vertex(-this.h * 0.2, 0);   // Inversé (x et y)
+        vertex(0, -this.w / 4);    // Inversé (x et y)
+        vertex(0, -this.w / 2);    // Inversé (x et y)
         endShape(CLOSE);
 
         strokeWeight(5);

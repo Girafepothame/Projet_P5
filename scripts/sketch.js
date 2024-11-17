@@ -337,7 +337,7 @@ function draw() {
                         for(let i=0; i<enemies.length; i++) {
                             enemies[i].draw()
                             enemies[i].move(ship)
-                            if (enemies[i].hp == 0) {
+                            if (enemies[i].hp <= 0) {
                                 enemies.splice(i, 1)
                             }
                         }

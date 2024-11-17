@@ -11,6 +11,7 @@ class Bullet {
   update() {
     this.pos.add(p5.Vector.fromAngle(this.direction).mult(this.speed))
     this.lifespan -= 5
+
   }
 
   isOffScreen() {
@@ -28,6 +29,10 @@ class Bullet {
     rotate(this.direction)
     rectMode(CENTER)
     rect(0, 0, this.h, this.w)
+
+    strokeWeight(2)
+    stroke(0, 255, 0)
+    point(0, 0)
     pop()
   }
 }
