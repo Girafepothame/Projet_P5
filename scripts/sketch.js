@@ -8,6 +8,7 @@ let settings = {
     mode : 0,      // -3 menu pause , -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
     spawnInterval: 500,
     colorShip : null,
+    colorCannon : null,
 }
 
 
@@ -221,8 +222,11 @@ function menuPause(){
     
 }
 
-let colorPickerDiv;
-let colorPicker;
+let colorPickerShipDiv;
+let colorPickerShip;
+
+let colorPickerCannonDiv;
+let colorPickerCannon;
 function menuSettings(){
     background(30)
     image(hexGrid, 0, 0)
@@ -254,26 +258,55 @@ function menuSettings(){
     textSize(width/50)
     text(`Volume : ${volumeSlider.value()}`, width/2 - textWidth(`Volume : ${volumeSlider.value()}`)/2, height/2 + space *2)
 
-    if (!colorPickerDiv) {
-        colorPickerDiv = createDiv();
+    ship.drawBaseShip()
+
+    textSize(width/50)
+
+    if (!colorPickerShipDiv) {
+        colorPickerShipDiv = createDiv();
     }
 
-    colorPickerDiv.position(width / 2 - 25, height / 2 + space * 3);
-    colorPickerDiv.style('z-index', '10');
-    colorPickerDiv.style('position', 'absolute');
+    colorPickerShipDiv.position(width/2 - width/4, height / 2 + space * 3);
+    colorPickerShipDiv.style('z-index', '10');
+    colorPickerShipDiv.style('position', 'absolute');
     
-    if (!colorPicker) {
-        colorPicker = createColorPicker(settings.colorShip);
+    if (!colorPickerShip) {
+        colorPickerShip = createColorPicker(settings.colorShip);
     }
-    colorPickerDiv.child(colorPicker);
+    colorPickerShipDiv.child(colorPickerShip);
 
-    colorPicker.style('width', `${width/20}px`);
-    colorPicker.style('height', `${height/20}px`);
-    colorPicker.style('background-color', 'transparent');
-    colorPicker.style('border', 'none');
-    settings.colorShip = colorPicker.color()
+    colorPickerShip.style('width', `${width/20}px`);
+    colorPickerShip.style('height', `${height/20}px`);
+    colorPickerShip.style('background-color', 'transparent');
+    colorPickerShip.style('border', 'none');
+    settings.colorShip = colorPickerShip.color()
 
-    text(`Couleur vaisseau`, width/2 - textWidth(`Couleur vaisseau`)/2, height/2 + space *4)
+    text(`Couleur vaisseau`, width/2 - width/4  - textWidth('Couleur vaisseau')/2, height/2 + space *5)
+
+    if (!colorPickerCannonDiv) {
+        colorPickerCannonDiv = createDiv();
+    }
+
+    colorPickerCannonDiv.position(width/2 + width/4, height / 2 + space * 3);
+    colorPickerCannonDiv.style('z-index', '10');
+    colorPickerCannonDiv.style('position', 'absolute');
+    
+    if (!colorPickerCannon) {
+        colorPickerCannon = createColorPicker(settings.colorCannon);
+    }
+    colorPickerCannonDiv.child(colorPickerCannon);
+
+    colorPickerCannon.style('width', `${width/20}px`);
+    colorPickerCannon.style('height', `${height/20}px`);
+    colorPickerCannon.style('background-color', 'transparent');
+    colorPickerCannon.style('border', 'none');
+    settings.colorCannon = colorPickerCannon.color()
+
+    text(`Couleur canons`, width/2 + width/4 - textWidth('Couleur canons')/2, height/2 + space *5)
+
+
+
+
 }
 
 
@@ -300,19 +333,36 @@ function setup() {
         volumeSlider = null;
     }
 
-    if(colorPicker){
-        colorPicker.remove();
-        colorPicker = null;
+    if(colorPickerShip){
+        colorPickerShip.remove();
+        colorPickerShip = null;
     }
     
     if(settings.colorShip === null){
         settings.colorShip = color(255,255,255)
     }
 
-    if (colorPickerDiv) {
-        colorPickerDiv.remove();
-        colorPickerDiv = null;
+    if (colorPickerShipDiv) {
+        colorPickerShipDiv.remove();
+        colorPickerShipDiv = null;
     }
+
+
+    if(colorPickerCannon){
+        colorPickerCannon.remove();
+        colorPickerCannon = null;
+    }
+    
+    if(settings.colorCannon === null){
+        settings.colorCannon = color(255,255,255)
+    }
+
+    if (colorPickerCannonDiv) {
+        colorPickerCannonDiv.remove();
+        colorPickerCannonDiv = null;
+    }
+
+
     assets.gameMusics = shuffle(assets.gameMusics);
     ship = new Ship(width/2, height/2, 20, 45);
 

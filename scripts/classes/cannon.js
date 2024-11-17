@@ -26,7 +26,7 @@ class Cannon {
         rotate(this.angle)
 
         noStroke()
-        fill(255)
+        fill(settings.colorCannon)
         beginShape()
             vertex(this.h * 0.75, 0)
             vertex(0, this.w / 2)

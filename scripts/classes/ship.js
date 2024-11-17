@@ -92,7 +92,7 @@ class Ship {
         return angle % TWO_PI;
     }
 
-    draw() {
+    drawBaseShip() {
         this.trail.display(0, 0);
 
         push();
@@ -108,9 +108,15 @@ class Ship {
         this.leftCannon.draw();
         this.rightCannon.draw();
         
+      
+
+    }
+
+        
+    draw() {
+        this.drawBaseShip();
         stroke(255, 0, 0)
         line(this.pos.x, this.pos.y, mouseX, mouseY)
-
         this.displayHealth();
 
         this.bullets.forEach(bullet => {
