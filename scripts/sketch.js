@@ -232,8 +232,9 @@ function menuSettings(){
         fill(255)
         textSize(width/50)
         volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
-        volumeSlider.position(width/2 - volumeSlider.width/2, height/2 + space);
     }
+    volumeSlider.position(width/2 - volumeSlider.width/2, height/2 + space);
+
     if(assets.gameMusics[gameplay.currentSongIndex].isPlaying()){
         assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value()/100)
     }
@@ -298,7 +299,7 @@ function setup() {
 }
 
 function draw() {
-    if(ship.hp == 0) {
+    if(ship.hp <= 0) {
         settings.mode = -1
     }
 
@@ -313,7 +314,7 @@ function draw() {
     } else {
         if(settings.mode == 1) {
             menuWaves()
-            if (keyIsDown(32)) {
+            if (keyIsDown(32)) {  // space
                 settings.mode = 2
             }   
         } else {
