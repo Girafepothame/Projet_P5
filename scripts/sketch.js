@@ -189,7 +189,10 @@ function menuDeath(){
     fill(255)
     textSize(width/50)
     text("Vous êtes mort", width/2 - textWidth("Vous êtes mort")/2, height/4)
-    
+    textSize(width/40)
+
+    text(`Score : ${gameplay.score}`, width/2 - textWidth(`Score : ${gameplay.score}`)/2, height/2 + height/10)
+
     buttons = [];
     drawButton("M E N U", height * 0.35);
 }
