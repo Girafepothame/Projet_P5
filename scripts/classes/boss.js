@@ -19,6 +19,7 @@ class boss{
       rect(this.pos.x, this.pos.y, this.size)
       
       pop()
+      
     }
     
     

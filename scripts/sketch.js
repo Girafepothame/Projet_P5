@@ -5,7 +5,7 @@ let enemies = []
 let mouseImage
 
 let settings = {
-    mode : 0,      // -3 menu pause , -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues,
+    mode : 0,      // -4 menu pause boss, -3 menu pause waves, -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues, 3 = menu boss, 4 = jeu boss
     spawnInterval: 500,
     colorShip : null,
     colorCannon : null,
@@ -29,6 +29,8 @@ let gameplay = {
     hpEnemies : 10,
     damageEnemies : 10,
     speedEnemies : 1,
+    difficulty : 1,
+    boss : null
 };
 
 let volumeSlider
@@ -141,9 +143,29 @@ function mainMenu(){
     
     buttons = [];
     drawButton("V A G U E S", height * 0.35);
-    drawButton("P A R A M E T R E S", height * 0.55);
+    drawButton("B O S S", height * 0.55);
+    drawButton("P A R A M E T R E S", height * 0.75);
 
 }
+
+
+function menuBoss(){
+    background(30)
+
+    image(hexGrid, 0, 0)
+
+    fill(255)
+    textSize(width/50)
+    text("B O S S", width/2 - textWidth("B O S S")/2, height/6)
+    
+    buttons = [];
+    drawButton("F A C I L E", height * 0.35);
+    drawButton("M E D I U M", height * 0.55);
+    drawButton("D I F F I C I L E", height * 0.75);
+
+}
+
+
 
 function showControls(size, centerX, centerY){
     // Controles
@@ -407,6 +429,76 @@ function spawnEnemy(){
     }
 }
 
+function spawnEnemyBoss(){
+    if(gameplay.nbEnemies < gameplay.nbEnemiesMax){
+        let x, y;
+        let side = floor(random(4));
+        if (side === 0) { // Côté gauche
+            x = -20;
+            y = random(height);
+        } else if (side === 1) { // Côté droit
+            x = width + 20;
+            y = random(height);
+        } else if (side === 2) { // Côté haut
+            x = random(width);
+            y = -20;
+        } else if (side === 3) { // Côté bas
+            x = random(width);
+            y = height + 20;
+        }
+
+        gameplay.boss.tabEnemy.push(new Enemy(20, x, y, gameplay.hpEnemies,gameplay.hpEnemies,gameplay.speedEnemies,gameplay.damageEnemies));
+        gameplay.nbEnemies++
+    }
+}
+
+function startGameBoss(){
+    enemies = []
+    gameplay.score = 0
+    gameplay.nbEnemies = 0
+
+    if(gameplay.difficulty === 1){
+
+        gameplay.nbEnemiesMax = 10
+        gameplay.hpEnemies = 10
+        gameplay.damageEnemies = 10
+        gameplay.speedEnemies = 1
+        settings.spawnInterval = 500
+        gameplay.boss = new boss(50, random(width), random(height),[], 50, 0, 1)
+        spawnEnemyBoss()
+        setInterval(spawnEnemyBoss, settings.spawnInterval)
+    }else{
+        if(gameplay.difficulty === 2){
+            gameplay.nbEnemiesMax = 50
+            gameplay.hpEnemies = 30
+            gameplay.damageEnemies = 15
+            gameplay.speedEnemies = 1.5
+            settings.spawnInterval = 3000
+            gameplay.boss = new boss(75, random(width), random(height),[], 100, 0, 2)
+            for(let i = 0; i < 5; i++){
+                spawnEnemyBoss()
+            }
+            setInterval(spawnEnemyBoss, settings.spawnInterval)
+        }else{
+            if(gameplay.difficulty === 3){
+                gameplay.nbEnemiesMax = 100
+                gameplay.hpEnemies = 50
+                gameplay.damageEnemies = 50
+                gameplay.speedEnemies = 2
+                settings.spawnInterval = 3000
+                gameplay.boss = new boss(50, random(width), random(height),[], 150, 0, 3)
+                for(let i = 0; i < 5; i++){
+                    spawnEnemyBoss()
+                }
+                setInterval(spawnEnemyBoss, settings.spawnInterval)
+            }
+        }
+    }
+    
+
+}
+
+
 function startGameWave(){
     enemies = []
     gameplay.score = 0
@@ -416,6 +508,7 @@ function startGameWave(){
     gameplay.hpEnemies = 10
     gameplay.damageEnemies = 10
     gameplay.speedEnemies = 1
+    settings.spawnInterval = 500
    
     spawnEnemy()
     setInterval(spawnEnemy, settings.spawnInterval)
@@ -427,7 +520,7 @@ function draw() {
         settings.mode = -1
     }
 
-    if(settings.mode != -3) {
+    if(settings.mode != -3 && settings.mode != -4) {
         if (buttonPause) {
             buttonPause.remove();
             buttonPause = null;
@@ -443,49 +536,70 @@ function draw() {
                 settings.mode = 2
             }   
         } else {
-            if(settings.mode == -1) {
-                menuDeath()
+            if(settings.mode == 3) {
+                menuBoss()
             } else {
-                if(settings.mode == -2) {
-                    menuSettings()
+                if(settings.mode == -1) {
+                    menuDeath()
                 } else {
-                    if(settings.mode == -3) {
-                        menuPause()
+                    if(settings.mode == -2) {
+                        menuSettings()
                     } else {
-                        background(30)
+                        if(settings.mode == -3 || settings.mode == -4) {
+                            menuPause()
+                        } else {
+                            background(30)
 
-                        image(hexGrid, 0, 0)
-                        text(`Score : ${gameplay.score}`, width/18, height/8)
-                        text(`Vagues : ${gameplay.wave}`, width/1.15, height/8)
+                            image(hexGrid, 0, 0)
+                            ship.draw()
+                            ship.update()
 
-                        ship.draw()
-                        ship.update()
+                            if(settings.mode==2){
+                                text(`Score : ${gameplay.score}`, width/18, height/8)
+                                text(`Vagues : ${gameplay.wave}`, width/1.15, height/8)
+                            
 
-                    
-                        for(let i=0; i<enemies.length; i++) {
-                            enemies[i].draw()
-                            enemies[i].move(ship)
-                            if (enemies[i].hp <= 0) {
-                                gameplay.score += enemies[i].deathScore
-                                enemies.splice(i, 1)
+                            
+
+                        
+                                for(let i=0; i<enemies.length; i++) {
+                                    enemies[i].draw()
+                                    enemies[i].move(ship)
+                                    if (enemies[i].hp <= 0) {
+                                        gameplay.score += enemies[i].deathScore
+                                        enemies.splice(i, 1)
+                                    }
+                                }
+
+                                if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
+                                    gameplay.wave++
+                                    gameplay.nbEnemies = 0
+                                    gameplay.nbEnemiesMax += 2
+
+                                    if(gameplay.wave % 4 === 0){
+                                        gameplay.hpEnemies += 5
+                                    }
+                                    if(gameplay.wave % 5 === 0){
+                                        gameplay.damageEnemies += 5
+
+                                    }
+                                    if(gameplay.wave % 6 === 0){
+                                        gameplay.speedEnemies += 0.5
+                                    }                          
+                                }
+                            }else{
+
+                                gameplay.boss.draw()
+                                for(let i=0; i<gameplay.boss.tabEnemy.length; i++) {
+                                    gameplay.boss.tabEnemy[i].draw()
+                                    gameplay.boss.tabEnemy[i].move(ship)
+                                    if (gameplay.boss.tabEnemy[i].hp <= 0) {
+                                        gameplay.boss.tabEnemy.splice(i, 1)
+                                    }
+                                }
+
+                                
                             }
-                        }
-
-                        if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
-                            gameplay.wave++
-                            gameplay.nbEnemies = 0
-                            gameplay.nbEnemiesMax += 2
-
-                            if(gameplay.wave % 4 === 0){
-                                gameplay.hpEnemies += 5
-                            }
-                            if(gameplay.wave % 5 === 0){
-                                gameplay.damageEnemies += 5
-
-                            }
-                            if(gameplay.wave % 6 === 0){
-                                gameplay.speedEnemies += 0.5
-                            }                          
                         }
                     }
                 }
@@ -534,7 +648,38 @@ function mousePressed() {
         getAudioContext().resume();
         playSong();
     }
-    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3) {
+
+    if (settings.mode === 3) {
+        for (let i = 0; i < buttons.length; i++) {
+            if (
+                mouseX > buttons[i].x1 &&
+                mouseX < buttons[i].x2 &&
+                mouseY > buttons[i].y1 &&
+                mouseY < buttons[i].y2
+            ) {
+                if (buttons[i].label === "D I F F I C I L E") {
+                    gameplay.difficulty = 3;
+                    settings.mode = 4;
+                    startGameBoss()
+                    
+                }else {
+                    if (buttons[i].label === "M E D I U M") {
+                        gameplay.difficulty = 2;
+                        settings.mode = 4;
+                        startGameBoss()
+                    }else {
+                        if (buttons[i].label === "F A C I L E") {
+                            gameplay.difficulty = 1;
+                            settings.mode = 4;
+                            startGameBoss()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3 || settings.mode === -4) {
         for (let i = 0; i < buttons.length; i++) {
             if (
                 mouseX > buttons[i].x1 &&
@@ -545,13 +690,19 @@ function mousePressed() {
                 if (buttons[i].label === "V A G U E S") {
                     settings.mode = 1;
                 }else{
-                    if (buttons[i].label === "M E N U") {
-                        setup()
+                    if (buttons[i].label === "B O S S") {
+                        settings.mode = 3;
                     }else{
-                        if (buttons[i].label === "P A R A M E T R E S") {
-                            settings.mode = -2;
+                   
+                        if (buttons[i].label === "M E N U") {
+                            setup()
+                        }else{
+                            if (buttons[i].label === "P A R A M E T R E S") {
+                                settings.mode = -2;
+                            }
                         }
                     }
+                
                 }
             }
         }
@@ -578,6 +729,27 @@ function keyPressed(){
             })
             buttonPause.mousePressed(() => {
                 settings.mode = 2
+            })
+        }
+    }
+    if(settings.mode === 4){
+        if(key === "p" || key === "P"){
+            settings.mode = -4
+            buttonPause = createButton("Reprendre partie")
+            buttonPause.style('background-color', 'rgba(0,0,0,0)')
+            buttonPause.style('color', 'white')
+            buttonPause.style('font-family', 'arial')
+            buttonPause.style('border', '3px solid white')
+            buttonPause.style('padding', `${width/50}px`)
+
+            buttonPause.mouseOver(() => {
+                buttonPause.style('background-color', 'rgba(75,75,75)')
+            })
+            buttonPause.mouseOut(() => {
+                buttonPause.style('background-color', 'rgba(0,0,0,0)')
+            })
+            buttonPause.mousePressed(() => {
+                settings.mode = 4
             })
         }
     }
