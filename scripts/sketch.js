@@ -8,7 +8,7 @@ let enemies = []
 let mouseImage
 
 let settings = {
-    mode : 0,      // -4 menu pause boss, -3 menu pause waves, -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues, 3 = menu boss, 4 = jeu boss
+    mode : 0,      //-5 menu win boss -4 menu pause boss, -3 menu pause waves, -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues, 3 = menu boss, 4 = jeu boss
     spawnInterval: 500,
     colorShip : null,
     colorCannon : null,
@@ -224,20 +224,10 @@ function menuWaves(){
     // Sur mobile
     //text("Click to start", width/2 - textWidth("Click to start")/2, height/6)
 
-
-
-
-
-
     let size =  min(width, height) / 15
     let centerX = width / 2
     let centerY = height / 2
     showControls(size, centerX, centerY)
-
-
-    
-    
-   
 }
 
 
@@ -252,13 +242,26 @@ function menuDeath(){
     textSize(width/50)
     text("Vous êtes mort", width/2 - textWidth("Vous êtes mort")/2, height/4)
     textSize(width/40)
-
+    
     text(`Score : ${gameplay.score}`, width/2 - textWidth(`Score : ${gameplay.score}`)/2, height/2 + height/10)
 
     buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
 }
 
+function menuBossWin(){
+    background(30)
+
+    image(hexGrid, 0, 0)
+
+    fill(255)
+    textSize(width/50)
+    text(`Vous avez battu le boss de niveau ${gameplay.difficulty}`, width/2 - textWidth(`Vous avez battu le boss de niveau ${gameplay.difficulty}`)/2, height/4)
+
+    buttonsMenu = [];
+    drawButton("M E N U", height * 0.35);
+
+}
 
 function menuPause(){
     background(30)
@@ -595,6 +598,12 @@ function draw() {
 
     if(ship.hp <= 0) {
         settings.mode = -1
+    }else{
+        if(settings.mode === 4){
+            if(gameplay.boss.hp <= 0 && gameplay.boss.tabEnemy.length === 0){
+                settings.mode = -5
+            }
+        }
     }
 
     if(settings.mode != -3 && settings.mode != -4) {
@@ -633,52 +642,58 @@ function draw() {
                         if(settings.mode == -3 || settings.mode == -4) {
                             menuPause()
                         } else {
-                            background(30)
-
-                            image(hexGrid, 0, 0)
-                            ship.draw()
-                            ship.update()
-                            handleJoysticks()
-
-                            if(settings.mode==2){
-                                text(`Score : ${gameplay.score}`, width/18, height/8)
-                                text(`Vagues : ${gameplay.wave}`, width/1.15, height/8)
-                            
-
-                            
-
-                        
-                                for(let i=0; i<enemies.length; i++) {
-                                    enemies[i].draw()
-                                    enemies[i].move(ship)
-                                    if (enemies[i].hp <= 0) {
-                                        gameplay.score += enemies[i].deathScore
-                                        enemies.splice(i, 1)
-                                    }
-                                }
-
-                                if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
-                                    gameplay.wave++
-                                    gameplay.nbEnemies = 0
-                                    gameplay.nbEnemiesMax += 2
-
-                                    if(gameplay.wave % 4 === 0){
-                                        gameplay.hpEnemies += 5
-                                    }
-                                    if(gameplay.wave % 5 === 0){
-                                        gameplay.damageEnemies += 5
-
-                                    }
-                                    if(gameplay.wave % 6 === 0){
-                                        gameplay.speedEnemies += 0.5
-                                    }                          
-                                }
+                            if(settings.mode == -5) {
+                                menuBossWin()
                             }else{
 
-                                gameplay.boss.draw()
-                                gameplay.boss.action(ship)
+                            
+                                background(30)
+
+                                image(hexGrid, 0, 0)
+                                ship.draw()
+                                ship.update()
+                                handleJoysticks()
+
+                                if(settings.mode==2){
+                                    text(`Score : ${gameplay.score}`, width/18, height/8)
+                                    text(`Vagues : ${gameplay.wave}`, width/1.15, height/8)
+                                
 
                                 
+
+                            
+                                    for(let i=0; i<enemies.length; i++) {
+                                        enemies[i].draw()
+                                        enemies[i].move(ship)
+                                        if (enemies[i].hp <= 0) {
+                                            gameplay.score += enemies[i].deathScore
+                                            enemies.splice(i, 1)
+                                        }
+                                    }
+
+                                    if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
+                                        gameplay.wave++
+                                        gameplay.nbEnemies = 0
+                                        gameplay.nbEnemiesMax += 2
+
+                                        if(gameplay.wave % 4 === 0){
+                                            gameplay.hpEnemies += 5
+                                        }
+                                        if(gameplay.wave % 5 === 0){
+                                            gameplay.damageEnemies += 5
+
+                                        }
+                                        if(gameplay.wave % 6 === 0){
+                                            gameplay.speedEnemies += 0.5
+                                        }                          
+                                    }
+                                }else{
+
+                                    gameplay.boss.draw()
+                                    gameplay.boss.action(ship)
+
+                                    
+                                }
                             }
                         }
                     }
@@ -768,7 +783,7 @@ function mousePressed() {
         }
     }
     
-    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3 || settings.mode === -4) {
+    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3 || settings.mode === -4 || settings.mode === -5) {
         for (let i = 0; i < buttonsMenu.length; i++) {
             if (
                 mouseX > buttonsMenu[i].x1 &&
