@@ -283,7 +283,12 @@ function menuSettings(){
     if(!volumeSlider){
         volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
     }
-    volumeSlider.position(width/2 - volumeSlider.width/2, height/2 + space);
+
+    let canvaGame = document.getElementById("canvaGame");
+    let sizeCanva = canvaGame.getBoundingClientRect();
+
+    
+    volumeSlider.position(sizeCanva.left+width/2 - volumeSlider.width/2, sizeCanva.top +height/2 + space);
 
     if(assets.gameMusics[gameplay.currentSongIndex].isPlaying()){
         assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value()/100)
@@ -302,8 +307,11 @@ function menuSettings(){
     if (!colorPickerShipDiv) {
         colorPickerShipDiv = createDiv();
     }
+    
+    colorPickerShipDiv.position(sizeCanva.left+width/2 - width/4, sizeCanva.top +height / 2 + space * 3);
 
-    colorPickerShipDiv.position(width/2 - width/4, height / 2 + space * 3);
+
+
     colorPickerShipDiv.style('z-index', '10');
     colorPickerShipDiv.style('position', 'absolute');
     
@@ -323,8 +331,12 @@ function menuSettings(){
     if (!colorPickerCannonDiv) {
         colorPickerCannonDiv = createDiv();
     }
+    
 
-    colorPickerCannonDiv.position(width/2 + width/4, height / 2 + space * 3);
+  
+    
+    colorPickerCannonDiv.position(sizeCanva.left+width/2 + width/4, sizeCanva.top +height / 2 + space * 3);
+
     colorPickerCannonDiv.style('z-index', '10');
     colorPickerCannonDiv.style('position', 'absolute');
     
