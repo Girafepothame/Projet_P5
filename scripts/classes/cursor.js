@@ -16,16 +16,19 @@ class Cursor {
     // Méthode pour mettre à jour la position du curseur
     update() {
         if (this.mobile && this.joystick) {
-            console.log("mobile")
             // Si mobile est vrai, on déplace le curseur avec le joystick
-            this.x += this.joystick.valX * 5;  // Multiplie par 5 pour augmenter la vitesse
-            this.y += this.joystick.valY * 5;
+            // Mappe les valeurs du joystick aux dimensions de l'écran
+            this.x = map(this.joystick.valX, -1, 1, 0, width); // Mappage de -1 à 1 (joystick) vers 0 à width (écran)
+            this.y = map(this.joystick.valY, -1, 1, 0, height); // Mappage de -1 à 1 (joystick) vers 0 à height (écran)
         } else {
             // Si mobile est faux, on déplace le curseur avec la souris
-            console.log("non mobile")
             this.x = mouseX;
             this.y = mouseY;
         }
+
+        // Empêcher le curseur de sortir des bords de l'écran avec constrain()
+        this.x = constrain(this.x, 0, width);  // Limite x entre 0 et la largeur de l'écran
+        this.y = constrain(this.y, 0, height); // Limite y entre 0 et la hauteur de l'écran
     }
 
     // Méthode pour afficher le curseur

@@ -379,14 +379,7 @@ function menuSettings() {
     settings.colorCannon = colorPickerCannon.color()
 
     text(`Couleur canons`, width / 2 + width / 4 - textWidth('Couleur canons') / 2, height / 2 + space * 5)
-
-
-
-
 }
-
-
-
 
 function playSong() {
     if (gameplay.currentSongIndex < assets.gameMusics.length) {
@@ -400,106 +393,21 @@ function nextSong() {
     gameplay.currentSongIndex = (gameplay.currentSongIndex + 1) % assets.gameMusics.length;
     playSong();
 }
+
 let canvas
+
 function setup() {
-    let container = document.getElementById('canvaGame');
-    canvas = createCanvas(container.offsetWidth, container.offsetHeight);
-    canvas.parent('canvaGame');
-
-    //createCanvas(windowWidth, windowHeight)
-
-    gui = createGui()
+    handleCanvas()
 
     handleJoysticks()
 
+    handleNavigator()
+
     gameplay.cursor = new Cursor(j2)
-    console.log(cursor)
 
-    details = navigator.userAgent;
-    regexp = /android|iphone|kindle|ipad/i;
+    handleSettings()
 
-    mobile = regexp.test(details)
-
-    textFont(assets.font);
-
-    if (volumeSlider) {
-        volumeSlider.remove();
-        volumeSlider = null;
-    }
-
-    if (colorPickerShip) {
-        colorPickerShip.remove();
-        colorPickerShip = null;
-    }
-
-    if (settings.colorShip === null) {
-        settings.colorShip = color(255, 255, 255)
-    }
-
-    if (colorPickerShipDiv) {
-        colorPickerShipDiv.remove();
-        colorPickerShipDiv = null;
-    }
-
-
-    if (colorPickerCannon) {
-        colorPickerCannon.remove();
-        colorPickerCannon = null;
-    }
-
-    if (settings.colorCannon === null) {
-        settings.colorCannon = color(255, 255, 255)
-    }
-
-    if (colorPickerCannonDiv) {
-        colorPickerCannonDiv.remove();
-        colorPickerCannonDiv = null;
-    }
-
-
-    assets.gameMusics = shuffle(assets.gameMusics);
-    ship = new Ship(width / 2, height / 2, 15, 35);
-
-
-    settings.mode = 0
-    hexRadius = 25
-
-    let hexWidth = sqrt(3) * hexRadius
-    let hexHeight = 2 * hexRadius
-
-    let cols = ceil(width / hexWidth)
-    let rows = ceil(height / hexHeight)
-
-    hexGrid = createGraphics(width, height)
-
-    drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
-}
-
-function handleJoysticks() {
-    let joystickSize = min(width, height) / 5;  // 20% de la taille la plus petite de l'écran
-
-    // Premier joystick : Déplacement
-    j1 = createJoystick("Déplacement", width / 10, height - joystickSize - 20, joystickSize, joystickSize, -1, 1, 1, -1);
-
-    // Deuxième joystick : Rotation
-    j2 = createJoystick("Rotation", width - width / 10 - joystickSize, height - joystickSize - 20, joystickSize, joystickSize, -1, 1, 1, -1);
-
-    // Style des joysticks
-    j1.setStyle({
-        strokeBg: color("#F7ECE1"),
-        strokeBgHover: color("#F7ECE1"),
-        strokeBgActive: color("#F7ECE1"),
-        fillBg: color("#CAC4CE"),
-        handleRadius: joystickSize / 2
-    });
-
-    j2.setStyle({
-        strokeBg: color("#F7ECE1"),
-        strokeBgHover: color("#F7ECE1"),
-        strokeBgActive: color("#F7ECE1"),
-        fillBg: color("#CAC4CE"),
-        handleRadius: joystickSize / 2
-    });
+    ship = new Ship(width / 2, height / 2, width/50, width/25, j2);
 }
 
 function spawnEnemy() {
@@ -520,7 +428,7 @@ function spawnEnemy() {
             y = height + 20;
         }
 
-        enemies.push(new Enemy(20, x, y, gameplay.hpEnemies, gameplay.hpEnemies, gameplay.speedEnemies, gameplay.damageEnemies));
+        enemies.push(new Enemy(width/60, x, y, gameplay.hpEnemies, gameplay.hpEnemies, gameplay.speedEnemies, gameplay.damageEnemies));
         gameplay.nbEnemies++
     }
 }
@@ -614,149 +522,50 @@ function startGameWave() {
 
 function draw() {
 
+    // Gérer les interruptions de jeu (pause, etc.)
+    handleGameInterruptions();
 
-    if (ship.hp <= 0) {
-        settings.mode = -1
-    }else{
-        if(settings.mode === 4){
-            if(gameplay.boss.hp <= 0 && gameplay.boss.tabEnemy.length === 0){
-                settings.mode = -5
-            }
-        }
-    }
+    // Gérer l'interface du jeu selon le mode
+    switch (settings.mode) {
+        case 0: // Menu principal
+            mainMenu();
+            break;
+        case 1: // Menu des vagues
 
-    if (settings.mode != -3 && settings.mode != -4) {
-        if (buttonPause) {
-            buttonPause.remove();
-            buttonPause = null;
-        }
-    }
-
-    if (settings.mode != 4 && settings.mode != 2 && settings.mode != -3 && settings.mode != -4) {
-        if (intervalGame) {
-            clearInterval(intervalGame);
-            intervalGame = null;
-        }
-    }
-
-    if (settings.mode == 0) {
-        mainMenu()
-    } else {
-        if (settings.mode == 1) {
-            menuWaves()
             if (keyIsDown(32) || mobile) {  // space
                 startGameWave()
                 settings.mode = 2
             }
-        } else {
-            if (settings.mode == 3) {
-                menuBoss()
-            } else {
-                if (settings.mode == -1) {
-                    menuDeath()
-                } else {
-                    if (settings.mode == -2) {
-                        menuSettings()
-                    } else {
-                        if (settings.mode == -3 || settings.mode == -4) {
-                            menuPause()
-                        } else {
-                            if(settings.mode == -5) {
-                                menuBossWin()
-                            }else{
 
-                            
-                                background(30)
-
-                            image(hexGrid, 0, 0)
-                            ship.draw()
-                            ship.update()
-                            if (mobile) {
-                                drawGui();
-                                gameplay.cursor.setMobile()
-                            }
-
-                            if (settings.mode == 2) {
-                                text(`Score : ${gameplay.score}`, width / 18, height / 8)
-                                text(`Vagues : ${gameplay.wave}`, width / 1.15, height / 8)
-
-
-
-
-
-                                for (let i = 0; i < enemies.length; i++) {
-                                    enemies[i].draw()
-                                    enemies[i].move(ship)
-                                    if (enemies[i].hp <= 0) {
-                                        gameplay.score += enemies[i].deathScore
-                                        enemies.splice(i, 1)
-                                    }
-                                }
-
-                                    if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
-                                        gameplay.wave++
-                                        gameplay.nbEnemies = 0
-                                        gameplay.nbEnemiesMax += 2
-
-                                        if(gameplay.wave % 4 === 0){
-                                            gameplay.hpEnemies += 5
-                                        }
-                                        if(gameplay.wave % 5 === 0){
-                                            gameplay.damageEnemies += 5
-
-                                        }
-                                        if(gameplay.wave % 6 === 0){
-                                            gameplay.speedEnemies += 0.5
-                                        }                          
-                                    }
-                                }else{
-
-                                    gameplay.boss.draw()
-                                    gameplay.boss.action(ship)
-
-                                    
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+            menuWaves();
+            break;
+        case 2: // Jeu des vagues
+            gameWaves();
+            break;
+        case 3: // Menu Boss
+            menuBoss();
+            break;
+        case -1: // Menu Mort
+            menuDeath();
+            break;
+        case -2: // Paramètres
+            menuSettings();
+            break;
+        case -3: // Pause dans le jeu
+        case -4: // Pause dans le boss
+            menuPause();
+            break;
+        case -5: // Victoire contre le boss
+            menuBossWin();
+            break;
+        default:
+            // Pour tout autre mode non spécifié
+            break;
     }
-    noCursor()
-    drawCursor()
 
-}
-
-function drawHexGrid(pg, cols, rows, hexWidth, hexHeight, hexRadius) {
-    pg.clear()
-    for (let row = 0; row <= rows; row++) {
-        for (let col = 0; col <= cols; col++) {
-            let x = col * hexWidth
-            let y = row * hexHeight
-
-            if (col % 2 === 1) {
-                y += hexHeight / 2
-            }
-            pg.push()
-            drawHexagon(pg, x, y, hexRadius)
-            pg.pop()
-        }
-    }
-}
-
-function drawHexagon(pg, x, y, radius) {
-    pg.beginShape()
-    pg.noStroke()
-    pg.fill(50)
-
-    for (let i = 0; i < 6; i++) {
-        let angle = TWO_PI / 6 * i
-        let xOffset = cos(angle) * radius
-        let yOffset = sin(angle) * radius
-        pg.vertex(x + xOffset, y + yOffset)
-    }
-    pg.endShape(pg.CLOSE)
+    // Dessiner le curseur
+    noCursor();
+    drawCursor();
 }
 
 
@@ -874,8 +683,6 @@ function keyPressed() {
 
 function windowResized() {
     let container = document.getElementById('canvaGame');
-
-
 
     resizeCanvas(container.offsetWidth, container.offsetHeight)
 
