@@ -785,7 +785,11 @@ function keyPressed(){
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight)
+    let container = document.getElementById('canvaGame');
+
+
+
+    resizeCanvas(container.offsetWidth, container.offsetHeight)
 
     hexRadius = 25
 
