@@ -9,7 +9,7 @@ let enemies = []
 let mouseImage
 
 let settings = {
-    mode: 0,      // -4 menu pause boss, -3 menu pause waves, -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues, 3 = menu boss, 4 = jeu boss
+    mode: 0,      // -5 menu win boss -4 menu pause boss, -3 menu pause waves, -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues, 3 = menu boss, 4 = jeu boss
     spawnInterval: 500,
     colorShip: null,
     colorCannon: null,

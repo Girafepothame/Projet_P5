@@ -182,15 +182,18 @@ function menuSettings() {
 function configureVolumeSlider() {
     if (!volumeSlider) {
         volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
+        let canvaGame = select("#canvaGame");
+        volumeSlider.parent(canvaGame);
     }
-    let canvaGame = document.querySelector("#canvaGame");
-    let canvaData = canvaGame.getBoundingClientRect()
-        
-    let hauteur = canvaGame.offsetHeight;
-    let largeur = canvaGame.offsetWidth;
 
+
+    let canvaGame = select("#canvaGame"); 
+    let canvaData = canvaGame.elt.getBoundingClientRect(); 
+  
+    let hauteur = canvaData.height;
+    let largeur = canvaData.width;
     
-    volumeSlider.position(canvaData.left + largeur/2 - volumeSlider.width/2, canvaData.top + hauteur/2 + height/10);
+    volumeSlider.position(canvaData.left + largeur / 2 - volumeSlider.width / 2, canvaData.top + hauteur / 2 + height / 10);
 
     if(assets.gameMusics[gameplay.currentSongIndex].isPlaying()){
         assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value()/100)
@@ -214,9 +217,17 @@ function configureColorPickers() {
 function createColorPickerShip() {
 if (!colorPickerShipDiv) {
         colorPickerShipDiv = createDiv();
+        let canvaGame = select("#canvaGame");
+        colorPickerShipDiv.parent(canvaGame);
     }
 
-    colorPickerShipDiv.position(width/2 - width/4, height / 2 + height/15 * 3);
+    let canvaGame = select("#canvaGame"); 
+    let canvaData = canvaGame.elt.getBoundingClientRect(); 
+  
+    let hauteur = canvaData.height;
+    let largeur = canvaData.width;
+
+    colorPickerShipDiv.position(canvaData.left + largeur/2 - largeur/4, canvaData.top + hauteur / 2 + hauteur/15 * 3);
     colorPickerShipDiv.style('z-index', '10');
     colorPickerShipDiv.style('position', 'absolute');
     
@@ -239,9 +250,17 @@ if (!colorPickerShipDiv) {
 function createColorPickerCannon() {
     if (!colorPickerCannonDiv) {
         colorPickerCannonDiv = createDiv();
+        let canvaGame = select("#canvaGame");
+        colorPickerCannonDiv.parent(canvaGame);
     }
 
-    colorPickerCannonDiv.position(width/2 + width/4, height / 2 + height/15 * 3);
+    let canvaGame = select("#canvaGame"); 
+    let canvaData = canvaGame.elt.getBoundingClientRect(); 
+    
+    let hauteur = canvaData.height;
+    let largeur = canvaData.width;
+
+    colorPickerCannonDiv.position(canvaData.left + largeur/2 + largeur/4, canvaData.top + hauteur / 2 + hauteur/15 * 3);
     colorPickerCannonDiv.style('z-index', '10');
     colorPickerCannonDiv.style('position', 'absolute');
     
