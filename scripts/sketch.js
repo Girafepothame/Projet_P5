@@ -45,6 +45,9 @@ let buttonPause
 
 function preload() {
     mouseImage = loadImage("assets/Img/mouse.svg")
+    joystickLeft = loadImage("assets/Img/joystickLeft.svg")
+    joystickRight = loadImage("assets/Img/joystickRight.svg")
+
     assets.font = loadFont('assets/fonts/menu.ttf');
 
     soundFormats("mp3");
@@ -173,8 +176,9 @@ function menuBoss(){
 function showControls(size, centerX, centerY){
     // Controles
     let spacing = size * 2
+    let imgSize = size * 1.5
 
-  
+    // Sur pc 
     drawKey(centerX, centerY - spacing, size, "Z", "Avancer")
     drawKey(centerX - spacing, centerY, size, "Q", "Gauche")
     drawKey(centerX, centerY, size, "S", "Reculer")
@@ -183,7 +187,6 @@ function showControls(size, centerX, centerY){
     drawKey(centerX + spacing, centerY - spacing*2, size, "P", "Pause")
 
 
-    let imgSize = size * 1.5
     image(mouseImage, centerX - imgSize/4, centerY + spacing*1.5, imgSize, imgSize)
 
 
@@ -191,21 +194,53 @@ function showControls(size, centerX, centerY){
 
     fill(255)
     text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
+
+    // Sur mobile
+    //image(joystickLeft, centerX - centerX/2, centerY, imgSize, imgSize)
+    //textSize(size/6)
+    //fill(255)
+    //text("Joystick gauche", centerX - centerX/2 - textWidth("Joystick gauche")/4, centerY - imgSize/3)
+    //text("Déplacement vaisseau", centerX - centerX/2 - textWidth("Déplacement vaisseau")/3, centerY + imgSize*1.2)
+
+
+
+    //image(joystickRight, centerX + centerX/2, centerY, imgSize, imgSize)
+    //textSize(size/6)
+    //fill(255)
+    //text("Joystick droit", centerX + centerX/2 - textWidth("Joystick droit")/4, centerY - imgSize/3)
+    //text("Orientation vaisseau", centerX + centerX/2 - textWidth("Orientation vaisseau")/3, centerY + imgSize*1.2)
+
 }
 
 function menuWaves(){
     background(30)
     fill(255)
     textSize(width/50)
+
+    // Sur pc
     text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
+    
+
+    // Sur mobile
+    //text("Click to start", width/2 - textWidth("Click to start")/2, height/6)
+
+
+
+
+
+
     let size =  min(width, height) / 15
     let centerX = width / 2
     let centerY = height / 2
-
     showControls(size, centerX, centerY)
+
+
+    
     
    
 }
+
+
 
 
 function menuDeath(){
