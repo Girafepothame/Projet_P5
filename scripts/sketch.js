@@ -890,12 +890,14 @@ function windowResized() {
     hexGrid = createGraphics(windowWidth, windowHeight)
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
 
+}
+
 // Bloquer le défilement de la page mobile
 function touchMoved() {
     return false;
 }
 
 function makeFullScreen(){
-    let container = document.getElementById('canvaGame');
+    let container = document.getElementById('canvaGame')
     container.requestFullscreen()
 }
