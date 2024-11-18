@@ -442,6 +442,8 @@ function keyPressed() {
             buttonPause.style('font-family', 'arial')
             buttonPause.style('border', '3px solid white')
             buttonPause.style('padding', `${width / 50}px`)
+            let canvaGame = select("#canvaGame");
+            buttonPause.parent(canvaGame);
 
             buttonPause.mouseOver(() => {
                 buttonPause.style('background-color', 'rgba(75,75,75)')
@@ -463,6 +465,8 @@ function keyPressed() {
             buttonPause.style('font-family', 'arial')
             buttonPause.style('border', '3px solid white')
             buttonPause.style('padding', `${width / 50}px`)
+            let canvaGame = select("#canvaGame");
+            buttonPause.parent(canvaGame);
 
             buttonPause.mouseOver(() => {
                 buttonPause.style('background-color', 'rgba(75,75,75)')

@@ -44,7 +44,14 @@ function menuPause() {
     drawButton("M E N U", height * 0.35);
     buttonPause.style('font-size', `${width / 50}px`)
 
-    buttonPause.position(width / 2 - buttonPause.width / 1.5, height / 2)
+
+    let canvaGame = select("#canvaGame"); 
+    let canvaData = canvaGame.elt.getBoundingClientRect(); 
+  
+    let hauteur = canvaData.height;
+    let largeur = canvaData.width;
+
+    buttonPause.position(canvaData.left + largeur / 2 - buttonPause.width / 1.5, canvaData.top + hauteur  / 2)
     let size = min(width, height) / 20
     let centerX = width / 6
     let centerY = height / 2
@@ -256,7 +263,7 @@ function createColorPickerCannon() {
 
     let canvaGame = select("#canvaGame"); 
     let canvaData = canvaGame.elt.getBoundingClientRect(); 
-    
+
     let hauteur = canvaData.height;
     let largeur = canvaData.width;
 
