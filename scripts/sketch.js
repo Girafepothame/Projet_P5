@@ -1,6 +1,6 @@
-let details, regexp
+let details, regexp, mobile
 
-let joystick1, joystick2
+let j1, j2
 
 let ship
 let cannon
@@ -8,10 +8,10 @@ let enemies = []
 let mouseImage
 
 let settings = {
-    mode : 0,      // -4 menu pause boss, -3 menu pause waves, -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues, 3 = menu boss, 4 = jeu boss
+    mode: 0,      // -4 menu pause boss, -3 menu pause waves, -2 parametres, -1 = vous etes mort,  0 = menu, 1 = menu vagues, 2 = jeu vagues, 3 = menu boss, 4 = jeu boss
     spawnInterval: 500,
-    colorShip : null,
-    colorCannon : null,
+    colorShip: null,
+    colorCannon: null,
 }
 
 
@@ -23,17 +23,17 @@ let buttonsMenu = []; // Stocker la position des boutons du menu
 
 let gameplay = {
     currentSongIndex: 0,
-    score : 0,
-    volumeMusic : 25,
-    cursor: { x: 0, y: 0 },
-    wave : 0,
-    nbEnemiesMax : 3,
-    nbEnemies : 0,
-    hpEnemies : 10,
-    damageEnemies : 10,
-    speedEnemies : 1,
-    difficulty : 1,
-    boss : null
+    score: 0,
+    volumeMusic: 25,
+    cursor: null,
+    wave: 0,
+    nbEnemiesMax: 3,
+    nbEnemies: 0,
+    hpEnemies: 10,
+    damageEnemies: 10,
+    speedEnemies: 1,
+    difficulty: 1,
+    boss: null
 };
 
 let volumeSlider
@@ -41,7 +41,7 @@ let volumeSlider
 
 let hexRadius
 let hexGrid
-let buttonPause 
+let buttonPause
 
 function preload() {
     mouseImage = loadImage("assets/Img/mouse.svg")
@@ -55,62 +55,49 @@ function preload() {
 }
 
 function drawCursor() {
-    push();
-
-    gameplay.cursor.x = lerp(gameplay.cursor.x, mouseX, 0.8);
-    gameplay.cursor.y = lerp(gameplay.cursor.y, mouseY, 0.8);
-  
-    fill(settings.mode === 2 ? [255, 200] : [255, 100]);
-    noStroke();
-    ellipse(gameplay.cursor.x, gameplay.cursor.y, settings.mode === 2 ? 5 : 20, settings.mode === 2 ? 5 : 20);
-    
-    if (settings.mode === 2) {
-      noFill();
-      stroke(255, 200);
-      ellipse(gameplay.cursor.x, gameplay.cursor.y, 30, 30);
-    }
-    pop();
+    gameplay.cursor.draw()
+    gameplay.cursor.update()
 }
 
-function drawKey(x,y, size, key, explanation){
+function drawKey(x, y, size, key, explanation) {
     push()
 
     // Touche
     fill(255)
     stroke(0)
     strokeWeight(2)
-    rect(x, y, size,size, 5)
+    rect(x, y, size, size, 5)
 
     // Texte touche
     fill(0)
     noStroke()
     textAlign(CENTER, CENTER)
-    textSize(size/6)
-    text(key, x + size/2, y + size /2)
+    textSize(size / 6)
+    text(key, x + size / 2, y + size / 2)
 
 
     // Texte explication
     fill(255)
     textAlign(CENTER, TOP)
-    text(explanation, x + size/2, y + size*1.2)
+    text(explanation, x + size / 2, y + size * 1.2)
     pop()
 }
 
 function drawButton(label, posY) {
     let buttonWidth = width / 3;
     let buttonHeight = height * 0.1;
-    
+
     let isHovered = mouseX > width / 2 - buttonWidth / 2 && mouseX < width / 2 + buttonWidth / 2 && mouseY > posY && mouseY < posY + buttonHeight;
 
     push()
 
-    if(isHovered){
+    if (isHovered) {
         fill(75)
     } else {
         noFill();
     }
 
-  
+
     stroke(255);
     strokeWeight(5);
     beginShape()
@@ -123,7 +110,7 @@ function drawButton(label, posY) {
     noStroke()
     textAlign(CENTER, CENTER);
     text(label, width / 2, posY + buttonHeight / 2);
-  
+
     pop()
 
     buttons.push({
@@ -135,15 +122,15 @@ function drawButton(label, posY) {
     });
 }
 
-function mainMenu(){
+function mainMenu() {
     background(30)
 
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width/50)
-    text("Brain Damaged Blaster Drift", width/2 - textWidth("Brain Damaged Blaster Drift")/2, height/6)
-    
+    textSize(width / 50)
+    text("Brain Damaged Blaster Drift", width / 2 - textWidth("Brain Damaged Blaster Drift") / 2, height / 6)
+
     buttons = [];
     drawButton("V A G U E S", height * 0.35);
     drawButton("B O S S", height * 0.55);
@@ -152,15 +139,15 @@ function mainMenu(){
 }
 
 
-function menuBoss(){
+function menuBoss() {
     background(30)
 
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width/50)
-    text("B O S S", width/2 - textWidth("B O S S")/2, height/6)
-    
+    textSize(width / 50)
+    text("B O S S", width / 2 - textWidth("B O S S") / 2, height / 6)
+
     buttons = [];
     drawButton("F A C I L E", height * 0.35);
     drawButton("M E D I U M", height * 0.55);
@@ -170,81 +157,81 @@ function menuBoss(){
 
 
 
-function showControls(size, centerX, centerY){
+function showControls(size, centerX, centerY) {
     // Controles
     let spacing = size * 2
 
-  
+
     drawKey(centerX, centerY - spacing, size, "Z", "Avancer")
     drawKey(centerX - spacing, centerY, size, "Q", "Gauche")
     drawKey(centerX, centerY, size, "S", "Reculer")
     drawKey(centerX + spacing, centerY, size, "D", "Droite")
 
-    drawKey(centerX + spacing, centerY - spacing*2, size, "P", "Pause")
+    drawKey(centerX + spacing, centerY - spacing * 2, size, "P", "Pause")
 
 
     let imgSize = size * 1.5
-    image(mouseImage, centerX - imgSize/4, centerY + spacing*1.5, imgSize, imgSize)
+    image(mouseImage, centerX - imgSize / 4, centerY + spacing * 1.5, imgSize, imgSize)
 
 
-    textSize(size/6)
+    textSize(size / 6)
 
     fill(255)
-    text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
+    text("Viser avec la souris", centerX - textWidth("Viser avec la souris") / 3, centerY + spacing * 1.5 + imgSize * 1.2)
 }
 
-function menuWaves(){
+function menuWaves() {
     background(30)
     fill(255)
     textSize(30)
-    text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
-    let size =  min(width, height) / 15
+    text("Press Space to start", width / 2 - textWidth("Press Space to start") / 2, height / 6)
+    let size = min(width, height) / 15
     let centerX = width / 2
     let centerY = height / 2
 
     showControls(size, centerX, centerY)
-    
-   
+
+
 }
 
 
-function menuDeath(){
+function menuDeath() {
     background(30)
 
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width/50)
-    text("Vous êtes mort", width/2 - textWidth("Vous êtes mort")/2, height/4)
-    textSize(width/40)
+    textSize(width / 50)
+    text("Vous êtes mort", width / 2 - textWidth("Vous êtes mort") / 2, height / 4)
+    textSize(width / 40)
 
-    text(`Score : ${gameplay.score}`, width/2 - textWidth(`Score : ${gameplay.score}`)/2, height/2 + height/10)
+    text(`Score : ${gameplay.score}`, width / 2 - textWidth(`Score : ${gameplay.score}`) / 2, height / 2 + height / 10)
 
     buttons = [];
     drawButton("M E N U", height * 0.35);
 }
 
 
-function menuPause(){
+function menuPause() {
     background(30)
 
 
     fill(255)
-    textSize(width/50)
-    text("Pause", width/2 - textWidth("Pause")/2, height/4)
-    
+    textSize(width / 50)
+    text("Pause", width / 2 - textWidth("Pause") / 2, height / 4)
+
     buttons = [];
     drawButton("M E N U", height * 0.35);
-    buttonPause.style('font-size', `${width/50}px`)
+    buttonPause.style('font-size', `${width / 50}px`)
 
-    buttonPause.position(width/2 - buttonPause.width/1.5, height/2)
-    let size =  min(width, height) / 20
+    buttonPause.position(width / 2 - buttonPause.width / 1.5, height / 2)
+    let size = min(width, height) / 20
     let centerX = width / 6
     let centerY = height / 2
 
     showControls(size, centerX, centerY)
 
-    
+
 }
 
 let colorPickerShipDiv;
@@ -252,82 +239,82 @@ let colorPickerShip;
 
 let colorPickerCannonDiv;
 let colorPickerCannon;
-function menuSettings(){
+function menuSettings() {
     background(30)
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width/50)
-    text("Paramètres", width/2 - textWidth("Paramètres")/2, height/4)
-    
+    textSize(width / 50)
+    text("Paramètres", width / 2 - textWidth("Paramètres") / 2, height / 4)
+
     buttons = [];
     drawButton("M E N U", height * 0.35);
 
-    let space = height/15
+    let space = height / 15
 
     // Volume
     fill(255)
-    textSize(width/50)
-    if(!volumeSlider){
+    textSize(width / 50)
+    if (!volumeSlider) {
         volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
     }
-    volumeSlider.position(width/2 - volumeSlider.width/2, height/2 + space);
+    volumeSlider.position(width / 2 - volumeSlider.width / 2, height / 2 + space);
 
-    if(assets.gameMusics[gameplay.currentSongIndex].isPlaying()){
-        assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value()/100)
+    if (assets.gameMusics[gameplay.currentSongIndex].isPlaying()) {
+        assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value() / 100)
     }
 
     gameplay.volumeMusic = volumeSlider.value()
 
     fill(255)
-    textSize(width/50)
-    text(`Volume : ${volumeSlider.value()}`, width/2 - textWidth(`Volume : ${volumeSlider.value()}`)/2, height/2 + space *2)
+    textSize(width / 50)
+    text(`Volume : ${volumeSlider.value()}`, width / 2 - textWidth(`Volume : ${volumeSlider.value()}`) / 2, height / 2 + space * 2)
 
     ship.drawBaseShip()
 
-    textSize(width/50)
+    textSize(width / 50)
 
     if (!colorPickerShipDiv) {
         colorPickerShipDiv = createDiv();
     }
 
-    colorPickerShipDiv.position(width/2 - width/4, height / 2 + space * 3);
+    colorPickerShipDiv.position(width / 2 - width / 4, height / 2 + space * 3);
     colorPickerShipDiv.style('z-index', '10');
     colorPickerShipDiv.style('position', 'absolute');
-    
+
     if (!colorPickerShip) {
         colorPickerShip = createColorPicker(settings.colorShip);
     }
     colorPickerShipDiv.child(colorPickerShip);
 
-    colorPickerShip.style('width', `${width/20}px`);
-    colorPickerShip.style('height', `${height/20}px`);
+    colorPickerShip.style('width', `${width / 20}px`);
+    colorPickerShip.style('height', `${height / 20}px`);
     colorPickerShip.style('background-color', 'transparent');
     colorPickerShip.style('border', 'none');
     settings.colorShip = colorPickerShip.color()
 
-    text(`Couleur vaisseau`, width/2 - width/4  - textWidth('Couleur vaisseau')/2, height/2 + space *5)
+    text(`Couleur vaisseau`, width / 2 - width / 4 - textWidth('Couleur vaisseau') / 2, height / 2 + space * 5)
 
     if (!colorPickerCannonDiv) {
         colorPickerCannonDiv = createDiv();
     }
 
-    colorPickerCannonDiv.position(width/2 + width/4, height / 2 + space * 3);
+    colorPickerCannonDiv.position(width / 2 + width / 4, height / 2 + space * 3);
     colorPickerCannonDiv.style('z-index', '10');
     colorPickerCannonDiv.style('position', 'absolute');
-    
+
     if (!colorPickerCannon) {
         colorPickerCannon = createColorPicker(settings.colorCannon);
     }
     colorPickerCannonDiv.child(colorPickerCannon);
 
-    colorPickerCannon.style('width', `${width/20}px`);
-    colorPickerCannon.style('height', `${height/20}px`);
+    colorPickerCannon.style('width', `${width / 20}px`);
+    colorPickerCannon.style('height', `${height / 20}px`);
     colorPickerCannon.style('background-color', 'transparent');
     colorPickerCannon.style('border', 'none');
     settings.colorCannon = colorPickerCannon.color()
 
-    text(`Couleur canons`, width/2 + width/4 - textWidth('Couleur canons')/2, height/2 + space *5)
+    text(`Couleur canons`, width / 2 + width / 4 - textWidth('Couleur canons') / 2, height / 2 + space * 5)
 
 
 
@@ -339,9 +326,9 @@ function menuSettings(){
 
 function playSong() {
     if (gameplay.currentSongIndex < assets.gameMusics.length) {
-      assets.gameMusics[gameplay.currentSongIndex].play();
-      assets.gameMusics[gameplay.currentSongIndex].setVolume(gameplay.volumeMusic/100);
-      assets.gameMusics[gameplay.currentSongIndex].onended(nextSong);
+        assets.gameMusics[gameplay.currentSongIndex].play();
+        assets.gameMusics[gameplay.currentSongIndex].setVolume(gameplay.volumeMusic / 100);
+        assets.gameMusics[gameplay.currentSongIndex].onended(nextSong);
     }
 }
 
@@ -352,11 +339,17 @@ function nextSong() {
 function setup() {
     createCanvas(windowWidth, windowHeight)
 
-    details = navigator.userAgent; 
-    regexp = /android|iphone|kindle|ipad/i; 
+    gui = createGui()
 
-    joystick1 = new Joystick(150, height - 150, 100, 40)
-    joystick2 = new Joystick(width - 150, height - 150, 100, 40)
+    handleJoysticks()
+
+    gameplay.cursor = new Cursor(j2)
+    console.log(cursor)
+
+    details = navigator.userAgent;
+    regexp = /android|iphone|kindle|ipad/i;
+
+    mobile = regexp.test(details)
 
     textFont(assets.font);
 
@@ -365,13 +358,13 @@ function setup() {
         volumeSlider = null;
     }
 
-    if(colorPickerShip){
+    if (colorPickerShip) {
         colorPickerShip.remove();
         colorPickerShip = null;
     }
-    
-    if(settings.colorShip === null){
-        settings.colorShip = color(255,255,255)
+
+    if (settings.colorShip === null) {
+        settings.colorShip = color(255, 255, 255)
     }
 
     if (colorPickerShipDiv) {
@@ -380,13 +373,13 @@ function setup() {
     }
 
 
-    if(colorPickerCannon){
+    if (colorPickerCannon) {
         colorPickerCannon.remove();
         colorPickerCannon = null;
     }
-    
-    if(settings.colorCannon === null){
-        settings.colorCannon = color(255,255,255)
+
+    if (settings.colorCannon === null) {
+        settings.colorCannon = color(255, 255, 255)
     }
 
     if (colorPickerCannonDiv) {
@@ -396,9 +389,9 @@ function setup() {
 
 
     assets.gameMusics = shuffle(assets.gameMusics);
-    ship = new Ship(width/2, height/2, 15, 35, joystick1, joystick2);
+    ship = new Ship(width / 2, height / 2, 15, 35);
 
-   
+
     settings.mode = 0
     hexRadius = 25
 
@@ -411,13 +404,37 @@ function setup() {
     hexGrid = createGraphics(width, height)
 
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
-
-
-    
 }
 
-function spawnEnemy(){
-    if(gameplay.nbEnemies < gameplay.nbEnemiesMax){
+function handleJoysticks() {
+    let joystickSize = min(width, height) / 5;  // 20% de la taille la plus petite de l'écran
+
+    // Premier joystick : Déplacement
+    j1 = createJoystick("Déplacement", width / 10, height - joystickSize - 20, joystickSize, joystickSize, -1, 1, 1, -1);
+
+    // Deuxième joystick : Rotation
+    j2 = createJoystick("Rotation", width - width / 10 - joystickSize, height - joystickSize - 20, joystickSize, joystickSize, -1, 1, 1, -1);
+
+    // Style des joysticks
+    j1.setStyle({
+        strokeBg: color("#F7ECE1"),
+        strokeBgHover: color("#F7ECE1"),
+        strokeBgActive: color("#F7ECE1"),
+        fillBg: color("#CAC4CE"),
+        handleRadius: joystickSize / 2
+    });
+
+    j2.setStyle({
+        strokeBg: color("#F7ECE1"),
+        strokeBgHover: color("#F7ECE1"),
+        strokeBgActive: color("#F7ECE1"),
+        fillBg: color("#CAC4CE"),
+        handleRadius: joystickSize / 2
+    });
+}
+
+function spawnEnemy() {
+    if (gameplay.nbEnemies < gameplay.nbEnemiesMax) {
         let x, y;
         let side = floor(random(4));
         if (side === 0) { // Côté gauche
@@ -434,13 +451,13 @@ function spawnEnemy(){
             y = height + 20;
         }
 
-        enemies.push(new Enemy(20, x, y, gameplay.hpEnemies,gameplay.hpEnemies,gameplay.speedEnemies,gameplay.damageEnemies));
+        enemies.push(new Enemy(20, x, y, gameplay.hpEnemies, gameplay.hpEnemies, gameplay.speedEnemies, gameplay.damageEnemies));
         gameplay.nbEnemies++
     }
 }
 
-function spawnEnemyBoss(){
-    if(gameplay.nbEnemies < gameplay.nbEnemiesMax){
+function spawnEnemyBoss() {
+    if (gameplay.nbEnemies < gameplay.nbEnemiesMax) {
         let x, y;
         let side = floor(random(4));
         if (side === 0) { // Côté gauche
@@ -457,60 +474,60 @@ function spawnEnemyBoss(){
             y = height + 20;
         }
 
-        gameplay.boss.tabEnemy.push(new Enemy(20, x, y, gameplay.hpEnemies,gameplay.hpEnemies,gameplay.speedEnemies,gameplay.damageEnemies));
+        gameplay.boss.tabEnemy.push(new Enemy(20, x, y, gameplay.hpEnemies, gameplay.hpEnemies, gameplay.speedEnemies, gameplay.damageEnemies));
         gameplay.nbEnemies++
     }
 }
 
 let intervalGame
 
-function startGameBoss(){
+function startGameBoss() {
     enemies = []
     gameplay.score = 0
     gameplay.nbEnemies = 0
 
-    if(gameplay.difficulty === 1){
+    if (gameplay.difficulty === 1) {
 
         gameplay.nbEnemiesMax = 10
         gameplay.hpEnemies = 10
         gameplay.damageEnemies = 10
         gameplay.speedEnemies = 1
         settings.spawnInterval = 500
-        gameplay.boss = new boss(50, random(width), random(height),[], 50, 1, 1)
+        gameplay.boss = new boss(50, random(width), random(height), [], 1000, 1, 1)
         spawnEnemyBoss()
         intervalGame = setInterval(spawnEnemyBoss, settings.spawnInterval)
-    }else{
-        if(gameplay.difficulty === 2){
+    } else {
+        if (gameplay.difficulty === 2) {
             gameplay.nbEnemiesMax = 50
             gameplay.hpEnemies = 30
             gameplay.damageEnemies = 15
             gameplay.speedEnemies = 1.5
             settings.spawnInterval = 3000
-            gameplay.boss = new boss(75, random(width), random(height),[], 100, 5, 2)
-            for(let i = 0; i < 5; i++){
+            gameplay.boss = new boss(75, random(width), random(height), [], 2000, 5, 2)
+            for (let i = 0; i < 5; i++) {
                 spawnEnemyBoss()
             }
             intervalGame = setInterval(spawnEnemyBoss, settings.spawnInterval)
-        }else{
-            if(gameplay.difficulty === 3){
+        } else {
+            if (gameplay.difficulty === 3) {
                 gameplay.nbEnemiesMax = 100
                 gameplay.hpEnemies = 50
                 gameplay.damageEnemies = 50
                 gameplay.speedEnemies = 2
                 settings.spawnInterval = 3000
-                gameplay.boss = new boss(50, random(width), random(height),[], 150, 10, 3)
-                for(let i = 0; i < 5; i++){
+                gameplay.boss = new boss(50, random(width), random(height), [], 3000, 10, 3)
+                for (let i = 0; i < 5; i++) {
                     spawnEnemyBoss()
                 }
                 intervalGame = setInterval(spawnEnemyBoss, settings.spawnInterval)
             }
         }
     }
-    
+
 
 }
 
-function startGameWave(){
+function startGameWave() {
     enemies = []
     gameplay.score = 0
     gameplay.wave = 1
@@ -520,7 +537,7 @@ function startGameWave(){
     gameplay.damageEnemies = 10
     gameplay.speedEnemies = 1
     settings.spawnInterval = 500
-   
+
     spawnEnemy()
     intervalGame = setInterval(spawnEnemy, settings.spawnInterval)
 
@@ -529,44 +546,44 @@ function startGameWave(){
 function draw() {
 
 
-    if(ship.hp <= 0) {
+    if (ship.hp <= 0) {
         settings.mode = -1
     }
 
-    if(settings.mode != -3 && settings.mode != -4) {
+    if (settings.mode != -3 && settings.mode != -4) {
         if (buttonPause) {
             buttonPause.remove();
             buttonPause = null;
         }
     }
 
-    if(settings.mode != 4 && settings.mode != 2 && settings.mode != -3 && settings.mode != -4) {
+    if (settings.mode != 4 && settings.mode != 2 && settings.mode != -3 && settings.mode != -4) {
         if (intervalGame) {
             clearInterval(intervalGame);
             intervalGame = null;
         }
     }
 
-    if(settings.mode == 0) {
-        mainMenu()  
+    if (settings.mode == 0) {
+        mainMenu()
     } else {
-        if(settings.mode == 1) {
+        if (settings.mode == 1) {
             menuWaves()
-            if (keyIsDown(32)) {  // space
+            if (keyIsDown(32) || mobile) {  // space
                 startGameWave()
                 settings.mode = 2
-            }   
+            }
         } else {
-            if(settings.mode == 3) {
+            if (settings.mode == 3) {
                 menuBoss()
             } else {
-                if(settings.mode == -1) {
+                if (settings.mode == -1) {
                     menuDeath()
                 } else {
-                    if(settings.mode == -2) {
+                    if (settings.mode == -2) {
                         menuSettings()
                     } else {
-                        if(settings.mode == -3 || settings.mode == -4) {
+                        if (settings.mode == -3 || settings.mode == -4) {
                             menuPause()
                         } else {
                             background(30)
@@ -574,17 +591,20 @@ function draw() {
                             image(hexGrid, 0, 0)
                             ship.draw()
                             ship.update()
-                            handleJoysticks()
+                            if (mobile) {
+                                drawGui();
+                                gameplay.cursor.setMobile()
+                            }
 
-                            if(settings.mode==2){
-                                text(`Score : ${gameplay.score}`, width/18, height/8)
-                                text(`Vagues : ${gameplay.wave}`, width/1.15, height/8)
-                            
+                            if (settings.mode == 2) {
+                                text(`Score : ${gameplay.score}`, width / 18, height / 8)
+                                text(`Vagues : ${gameplay.wave}`, width / 1.15, height / 8)
 
-                            
 
-                        
-                                for(let i=0; i<enemies.length; i++) {
+
+
+
+                                for (let i = 0; i < enemies.length; i++) {
                                     enemies[i].draw()
                                     enemies[i].move(ship)
                                     if (enemies[i].hp <= 0) {
@@ -593,47 +613,38 @@ function draw() {
                                     }
                                 }
 
-                                if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
+                                if (gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0) {
                                     gameplay.wave++
                                     gameplay.nbEnemies = 0
                                     gameplay.nbEnemiesMax += 2
 
-                                    if(gameplay.wave % 4 === 0){
+                                    if (gameplay.wave % 4 === 0) {
                                         gameplay.hpEnemies += 5
                                     }
-                                    if(gameplay.wave % 5 === 0){
+                                    if (gameplay.wave % 5 === 0) {
                                         gameplay.damageEnemies += 5
 
                                     }
-                                    if(gameplay.wave % 6 === 0){
+                                    if (gameplay.wave % 6 === 0) {
                                         gameplay.speedEnemies += 0.5
-                                    }                          
+                                    }
                                 }
-                            }else{
+                            } else {
 
                                 gameplay.boss.draw()
                                 gameplay.boss.action(ship)
 
-                                
+
                             }
                         }
                     }
                 }
             }
-        }    
+        }
     }
     noCursor()
     drawCursor()
 
-}
-
-function handleJoysticks() {
-
-    joystick1.update()
-    joystick1.display()
-
-    joystick2.update()
-    joystick2.display()
 }
 
 function drawHexGrid(pg, cols, rows, hexWidth, hexHeight, hexRadius) {
@@ -668,8 +679,8 @@ function drawHexagon(pg, x, y, radius) {
 }
 
 
-function mousePressed() {
-    if(getAudioContext().state !== 'running') {
+function touchStarted() {
+    if (getAudioContext().state !== 'running') {
         getAudioContext().resume();
         playSong();
     }
@@ -686,13 +697,13 @@ function mousePressed() {
                     gameplay.difficulty = 3;
                     settings.mode = 4;
                     startGameBoss()
-                    
-                }else {
+
+                } else {
                     if (buttons[i].label === "M E D I U M") {
                         gameplay.difficulty = 2;
                         settings.mode = 4;
                         startGameBoss()
-                    }else {
+                    } else {
                         if (buttons[i].label === "F A C I L E") {
                             gameplay.difficulty = 1;
                             settings.mode = 4;
@@ -703,7 +714,7 @@ function mousePressed() {
             }
         }
     }
-    
+
     if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3 || settings.mode === -4) {
         for (let i = 0; i < buttons.length; i++) {
             if (
@@ -714,20 +725,20 @@ function mousePressed() {
             ) {
                 if (buttons[i].label === "V A G U E S") {
                     settings.mode = 1;
-                }else{
+                } else {
                     if (buttons[i].label === "B O S S") {
                         settings.mode = 3;
-                    }else{
-                   
+                    } else {
+
                         if (buttons[i].label === "M E N U") {
                             setup()
-                        }else{
+                        } else {
                             if (buttons[i].label === "P A R A M E T R E S") {
                                 settings.mode = -2;
                             }
                         }
                     }
-                
+
                 }
             }
         }
@@ -735,16 +746,16 @@ function mousePressed() {
 }
 
 
-function keyPressed(){
-    if(settings.mode === 2){
-        if(key === "p" || key === "P"){
+function keyPressed() {
+    if (settings.mode === 2) {
+        if (key === "p" || key === "P") {
             settings.mode = -3
             buttonPause = createButton("Reprendre partie")
             buttonPause.style('background-color', 'rgba(0,0,0,0)')
             buttonPause.style('color', 'white')
             buttonPause.style('font-family', 'arial')
             buttonPause.style('border', '3px solid white')
-            buttonPause.style('padding', `${width/50}px`)
+            buttonPause.style('padding', `${width / 50}px`)
 
             buttonPause.mouseOver(() => {
                 buttonPause.style('background-color', 'rgba(75,75,75)')
@@ -752,20 +763,20 @@ function keyPressed(){
             buttonPause.mouseOut(() => {
                 buttonPause.style('background-color', 'rgba(0,0,0,0)')
             })
-            buttonPause.mousePressed(() => {
+            buttonPause.touchStarted(() => {
                 settings.mode = 2
             })
         }
     }
-    if(settings.mode === 4){
-        if(key === "p" || key === "P"){
+    if (settings.mode === 4) {
+        if (key === "p" || key === "P") {
             settings.mode = -4
             buttonPause = createButton("Reprendre partie")
             buttonPause.style('background-color', 'rgba(0,0,0,0)')
             buttonPause.style('color', 'white')
             buttonPause.style('font-family', 'arial')
             buttonPause.style('border', '3px solid white')
-            buttonPause.style('padding', `${width/50}px`)
+            buttonPause.style('padding', `${width / 50}px`)
 
             buttonPause.mouseOver(() => {
                 buttonPause.style('background-color', 'rgba(75,75,75)')
@@ -773,7 +784,7 @@ function keyPressed(){
             buttonPause.mouseOut(() => {
                 buttonPause.style('background-color', 'rgba(0,0,0,0)')
             })
-            buttonPause.mousePressed(() => {
+            buttonPause.touchStarted(() => {
                 settings.mode = 4
             })
         }
@@ -793,5 +804,9 @@ function windowResized() {
 
     hexGrid = createGraphics(windowWidth, windowHeight)
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
+}
 
+// Bloquer le défilement de la page mobile
+function touchMoved() {
+    return false;
 }

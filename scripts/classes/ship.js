@@ -15,18 +15,20 @@ class Ship {
         this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, this.w);
 
         this.bullets = []
-        this.damage = 10
+        this.damage = 50
+
+        this.cursor = gameplay.cursor
     }
 
     update() {
         // Direction towards the mouse
-        let direction = createVector(mouseX - this.pos.x, mouseY - this.pos.y);
+        let direction = createVector(this.cursor.x - this.pos.x, this.cursor.y - this.pos.y);
         let targetAngle = direction.heading(); // Angle towards the mouse
 
         // Normalize angles to be between -PI and PI
         targetAngle = this.normalizeAngle(targetAngle);
         this.angle = this.normalizeAngle(this.angle); // Normalize current angle
-        
+
         // Calculate the difference in angles and normalize it to the shortest path
         let angleDiff = targetAngle - this.angle;
 
@@ -54,7 +56,7 @@ class Ship {
         // Edge wrapping
         this.edges();
 
-        
+
     }
 
     handleMovement() {
@@ -107,16 +109,16 @@ class Ship {
 
         this.leftCannon.draw();
         this.rightCannon.draw();
-        
-      
+
+
 
     }
 
-        
+
     draw() {
         this.drawBaseShip();
         stroke(255, 0, 0)
-        line(this.pos.x, this.pos.y, mouseX, mouseY)
+        line(this.pos.x, this.pos.y, this.cursor.x, this.cursor.y)
         this.displayHealth();
 
         this.bullets.forEach(bullet => {

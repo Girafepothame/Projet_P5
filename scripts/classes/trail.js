@@ -9,7 +9,7 @@ class Trail {
 
     add(position) {
         this.positions.push(position.copy())
-        this.angle = atan2(mouseY - (position.y), mouseX - (position.x))
+        this.angle = atan2(gameplay.cursor.y - (position.y), gameplay.cursor.x - (position.x))
         if (this.positions.length > this.maxLength) {
             this.positions.shift()
         }

@@ -19,7 +19,7 @@ class Cannon {
         this.pos.x = this.ship.pos.x + cos(this.ship.angle) * this.offsetX - sin(this.ship.angle) * this.offsetY
         this.pos.y = this.ship.pos.y + sin(this.ship.angle) * this.offsetX + cos(this.ship.angle) * this.offsetY
 
-        this.angle = createVector(mouseX - this.pos.x, mouseY - this.pos.y).heading()
+        this.angle = createVector(gameplay.cursor.x - this.pos.x, gameplay.cursor.y - this.pos.y).heading()
 
         push()
         translate(this.pos.x, this.pos.y)
@@ -46,7 +46,7 @@ class Cannon {
 
     shoot() {
         if(millis() - this.lastShotTime > this.shootInterval){
-            this.ship.bullets.push(new Bullet(this.pos, createVector(mouseX, mouseY), 2.5, 5, 30, 10000,color(255,255,255) ))
+            this.ship.bullets.push(new Bullet(this.pos, createVector(gameplay.cursor.x, gameplay.cursor.y), 2.5, 5, 30, 10000, color(255,255,255)))
             this.lastShotTime = millis()
         }
     }

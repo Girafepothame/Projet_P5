@@ -79,7 +79,7 @@ class Enemy{
 
   shoot(target){
     if(millis() - this.lastShotTime > this.shootInterval){
-      this.bullets.push(new Bullet(this.pos, target.pos, 5, 15, 10, 10000, color(255, 0, 0)))
+      this.bullets.push(new Bullet(this.pos, target.pos, 5, 15, 5, 10000, color(255, 0, 0)))
       this.lastShotTime = millis()
     }
   }
