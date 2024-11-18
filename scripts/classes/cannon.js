@@ -11,7 +11,7 @@ class Cannon {
         this.angle = 0
 
         this.lastShotTime = 0
-        this.shootInterval = 1000
+        this.shootInterval = 200
     }
 
     draw() {
@@ -46,7 +46,7 @@ class Cannon {
 
     shoot() {
         if(millis() - this.lastShotTime > this.shootInterval){
-            this.ship.bullets.push(new Bullet(this.pos, createVector(mouseX, mouseY), 5, 20, 20, 10000,color(255,255,255) ))
+            this.ship.bullets.push(new Bullet(this.pos, createVector(mouseX, mouseY), 2.5, 5, 30, 10000,color(255,255,255) ))
             this.lastShotTime = millis()
         }
     }

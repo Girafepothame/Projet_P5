@@ -1,3 +1,6 @@
+let details, regexp
+
+let joystick1, joystick2
 
 let ship
 let cannon
@@ -348,6 +351,13 @@ function nextSong() {
 }
 function setup() {
     createCanvas(windowWidth, windowHeight)
+
+    details = navigator.userAgent; 
+    regexp = /android|iphone|kindle|ipad/i; 
+
+    joystick1 = new Joystick(150, height - 150, 100, 40)
+    joystick2 = new Joystick(width - 150, height - 150, 100, 40)
+
     textFont(assets.font);
 
     if (volumeSlider) {
@@ -386,7 +396,7 @@ function setup() {
 
 
     assets.gameMusics = shuffle(assets.gameMusics);
-    ship = new Ship(width/2, height/2, 20, 45);
+    ship = new Ship(width/2, height/2, 15, 35, joystick1, joystick2);
 
    
     settings.mode = 0
@@ -517,6 +527,8 @@ function startGameWave(){
 }
 
 function draw() {
+
+
     if(ship.hp <= 0) {
         settings.mode = -1
     }
@@ -562,6 +574,7 @@ function draw() {
                             image(hexGrid, 0, 0)
                             ship.draw()
                             ship.update()
+                            handleJoysticks()
 
                             if(settings.mode==2){
                                 text(`Score : ${gameplay.score}`, width/18, height/8)
@@ -612,6 +625,15 @@ function draw() {
     noCursor()
     drawCursor()
 
+}
+
+function handleJoysticks() {
+
+    joystick1.update()
+    joystick1.display()
+
+    joystick2.update()
+    joystick2.display()
 }
 
 function drawHexGrid(pg, cols, rows, hexWidth, hexHeight, hexRadius) {

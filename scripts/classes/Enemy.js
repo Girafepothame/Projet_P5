@@ -5,6 +5,7 @@ class Enemy{
     this.size = size;
     this.angle = 0
     
+    this.maxHp = hp
     this.hp = hp;
     this.deathScore = ds;
     this.speed = sd;
@@ -20,14 +21,14 @@ class Enemy{
     
   draw(){
     this.angle += 0.1
+    let alpha = map(this.hp, 0, this.maxHp, 0, 255)
     push()
     translate(this.pos.x, this.pos.y)
     rotate(this.angle)
     rectMode(CENTER)
-    fill(255)
+    fill(255, alpha)
     noStroke()
     rect(0, 0,this.size)
-    text(this.hp, 0, 0)
     
     noFill()
     stroke(this.color)

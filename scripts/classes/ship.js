@@ -4,7 +4,7 @@ class Ship {
         this.w = w;
         this.h = h;
         this.angle = 0; // Initial angle
-        this.speed = 10;
+        this.speed = 5;
         this.velocity = createVector(0, 0);
         this.acceleration = createVector(0, 0);
         this.hp = 100;
