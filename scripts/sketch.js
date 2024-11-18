@@ -45,6 +45,9 @@ let buttonPause
 
 function preload() {
     mouseImage = loadImage("assets/Img/mouse.svg")
+    joystickLeft = loadImage("assets/Img/joystickLeft.svg")
+    joystickRight = loadImage("assets/Img/joystickRight.svg")
+
     assets.font = loadFont('assets/fonts/menu.ttf');
 
     soundFormats("mp3");
@@ -113,7 +116,7 @@ function drawButton(label, posY) {
 
     pop()
 
-    buttons.push({
+    buttonsMenu.push({
         x1: width / 2 - buttonWidth / 2,
         x2: width / 2 + buttonWidth / 2,
         y1: posY,
@@ -128,10 +131,10 @@ function mainMenu() {
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width / 50)
-    text("Brain Damaged Blaster Drift", width / 2 - textWidth("Brain Damaged Blaster Drift") / 2, height / 6)
-
-    buttons = [];
+    textSize(width/50)
+    text("Brain Damaged Blaster Drift", width/2 - textWidth("Brain Damaged Blaster Drift")/2, height/6)
+    
+    buttonsMenu = [];
     drawButton("V A G U E S", height * 0.35);
     drawButton("B O S S", height * 0.55);
     drawButton("P A R A M E T R E S", height * 0.75);
@@ -145,10 +148,10 @@ function menuBoss() {
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width / 50)
-    text("B O S S", width / 2 - textWidth("B O S S") / 2, height / 6)
-
-    buttons = [];
+    textSize(width/50)
+    text("B O S S", width/2 - textWidth("B O S S")/2, height/6)
+    
+    buttonsMenu = [];
     drawButton("F A C I L E", height * 0.35);
     drawButton("M E D I U M", height * 0.55);
     drawButton("D I F F I C I L E", height * 0.75);
@@ -160,8 +163,9 @@ function menuBoss() {
 function showControls(size, centerX, centerY) {
     // Controles
     let spacing = size * 2
+    let imgSize = size * 1.5
 
-
+    // Sur pc 
     drawKey(centerX, centerY - spacing, size, "Z", "Avancer")
     drawKey(centerX - spacing, centerY, size, "Q", "Gauche")
     drawKey(centerX, centerY, size, "S", "Reculer")
@@ -170,29 +174,52 @@ function showControls(size, centerX, centerY) {
     drawKey(centerX + spacing, centerY - spacing * 2, size, "P", "Pause")
 
 
-    let imgSize = size * 1.5
-    image(mouseImage, centerX - imgSize / 4, centerY + spacing * 1.5, imgSize, imgSize)
+    image(mouseImage, centerX - imgSize/4, centerY + spacing*1.5, imgSize, imgSize)
 
 
     textSize(size / 6)
 
     fill(255)
-    text("Viser avec la souris", centerX - textWidth("Viser avec la souris") / 3, centerY + spacing * 1.5 + imgSize * 1.2)
+    text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
+
+    // Sur mobile
+    //image(joystickLeft, centerX - centerX/2, centerY, imgSize, imgSize)
+    //textSize(size/6)
+    //fill(255)
+    //text("Joystick gauche", centerX - centerX/2 - textWidth("Joystick gauche")/4, centerY - imgSize/3)
+    //text("Déplacement vaisseau", centerX - centerX/2 - textWidth("Déplacement vaisseau")/3, centerY + imgSize*1.2)
+
+
+
+    //image(joystickRight, centerX + centerX/2, centerY, imgSize, imgSize)
+    //textSize(size/6)
+    //fill(255)
+    //text("Joystick droit", centerX + centerX/2 - textWidth("Joystick droit")/4, centerY - imgSize/3)
+    //text("Orientation vaisseau", centerX + centerX/2 - textWidth("Orientation vaisseau")/3, centerY + imgSize*1.2)
+
 }
 
 function menuWaves() {
     background(30)
     fill(255)
-    textSize(30)
-    text("Press Space to start", width / 2 - textWidth("Press Space to start") / 2, height / 6)
-    let size = min(width, height) / 15
+    textSize(width/50)
+
+    // Sur pc
+    text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
+    
+
+    // Sur mobile
+    //text("Click to start", width/2 - textWidth("Click to start")/2, height/6)
+
+    let size =  min(width, height) / 15
     let centerX = width / 2
     let centerY = height / 2
-
     showControls(size, centerX, centerY)
-
-
 }
+
+
+
+
 
 
 function menuDeath() {
@@ -201,31 +228,56 @@ function menuDeath() {
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width / 50)
-    text("Vous êtes mort", width / 2 - textWidth("Vous êtes mort") / 2, height / 4)
-    textSize(width / 40)
+    textSize(width/50)
+    text("Vous êtes mort", width/2 - textWidth("Vous êtes mort")/2, height/4)
+    textSize(width/40)
+    
+    text(`Score : ${gameplay.score}`, width/2 - textWidth(`Score : ${gameplay.score}`)/2, height/2 + height/10)
 
-    text(`Score : ${gameplay.score}`, width / 2 - textWidth(`Score : ${gameplay.score}`) / 2, height / 2 + height / 10)
-
-    buttons = [];
+    buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
 }
 
+function menuBossWin(){
+    background(30)
+
+    image(hexGrid, 0, 0)
+
+    fill(255)
+    textSize(width/50)
+    text(`Vous avez battu le boss de niveau ${gameplay.difficulty}`, width/2 - textWidth(`Vous avez battu le boss de niveau ${gameplay.difficulty}`)/2, height/4)
+
+    buttonsMenu = [];
+    drawButton("M E N U", height * 0.35);
+
+}
 
 function menuPause() {
     background(30)
 
 
     fill(255)
-    textSize(width / 50)
-    text("Pause", width / 2 - textWidth("Pause") / 2, height / 4)
-
-    buttons = [];
+    textSize(width/50)
+    text("Pause", width/2 - textWidth("Pause")/2, height/4)
+    
+    buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
-    buttonPause.style('font-size', `${width / 50}px`)
 
-    buttonPause.position(width / 2 - buttonPause.width / 1.5, height / 2)
-    let size = min(width, height) / 20
+    let canvaGame = document.getElementById("canvaGame");
+    let sizeCanva = canvaGame.getBoundingClientRect();
+
+    
+    let buttonWidth = width / 4; 
+    let buttonHeight = height / 15; 
+  
+    buttonPause.style("font-size", `${width / 50}px`);
+    buttonPause.size(buttonWidth, buttonHeight);
+  
+    buttonPause.position(sizeCanva.left + sizeCanva.width / 2 - buttonWidth / 2, sizeCanva.top + sizeCanva.height / 2 - buttonHeight / 2);
+
+
+  
+    let size =  min(width, height) / 20
     let centerX = width / 6
     let centerY = height / 2
 
@@ -244,10 +296,10 @@ function menuSettings() {
     image(hexGrid, 0, 0)
 
     fill(255)
-    textSize(width / 50)
-    text("Paramètres", width / 2 - textWidth("Paramètres") / 2, height / 4)
-
-    buttons = [];
+    textSize(width/50)
+    text("Paramètres", width/2 - textWidth("Paramètres")/2, height/4)
+    
+    buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
 
     let space = height / 15
@@ -258,7 +310,12 @@ function menuSettings() {
     if (!volumeSlider) {
         volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
     }
-    volumeSlider.position(width / 2 - volumeSlider.width / 2, height / 2 + space);
+
+    let canvaGame = document.getElementById("canvaGame");
+    let sizeCanva = canvaGame.getBoundingClientRect();
+
+    
+    volumeSlider.position(sizeCanva.left+width/2 - volumeSlider.width/2, sizeCanva.top +height/2 + space);
 
     if (assets.gameMusics[gameplay.currentSongIndex].isPlaying()) {
         assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value() / 100)
@@ -277,8 +334,11 @@ function menuSettings() {
     if (!colorPickerShipDiv) {
         colorPickerShipDiv = createDiv();
     }
+    
+    colorPickerShipDiv.position(sizeCanva.left+width/2 - width/4, sizeCanva.top +height / 2 + space * 3);
 
-    colorPickerShipDiv.position(width / 2 - width / 4, height / 2 + space * 3);
+
+
     colorPickerShipDiv.style('z-index', '10');
     colorPickerShipDiv.style('position', 'absolute');
 
@@ -298,8 +358,12 @@ function menuSettings() {
     if (!colorPickerCannonDiv) {
         colorPickerCannonDiv = createDiv();
     }
+    
 
-    colorPickerCannonDiv.position(width / 2 + width / 4, height / 2 + space * 3);
+  
+    
+    colorPickerCannonDiv.position(sizeCanva.left+width/2 + width/4, sizeCanva.top +height / 2 + space * 3);
+
     colorPickerCannonDiv.style('z-index', '10');
     colorPickerCannonDiv.style('position', 'absolute');
 
@@ -336,8 +400,13 @@ function nextSong() {
     gameplay.currentSongIndex = (gameplay.currentSongIndex + 1) % assets.gameMusics.length;
     playSong();
 }
+let canvas
 function setup() {
-    createCanvas(windowWidth, windowHeight)
+    let container = document.getElementById('canvaGame');
+    canvas = createCanvas(container.offsetWidth, container.offsetHeight);
+    canvas.parent('canvaGame');
+
+    //createCanvas(windowWidth, windowHeight)
 
     gui = createGui()
 
@@ -548,6 +617,12 @@ function draw() {
 
     if (ship.hp <= 0) {
         settings.mode = -1
+    }else{
+        if(settings.mode === 4){
+            if(gameplay.boss.hp <= 0 && gameplay.boss.tabEnemy.length === 0){
+                settings.mode = -5
+            }
+        }
     }
 
     if (settings.mode != -3 && settings.mode != -4) {
@@ -586,7 +661,12 @@ function draw() {
                         if (settings.mode == -3 || settings.mode == -4) {
                             menuPause()
                         } else {
-                            background(30)
+                            if(settings.mode == -5) {
+                                menuBossWin()
+                            }else{
+
+                            
+                                background(30)
 
                             image(hexGrid, 0, 0)
                             ship.draw()
@@ -613,28 +693,29 @@ function draw() {
                                     }
                                 }
 
-                                if (gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0) {
-                                    gameplay.wave++
-                                    gameplay.nbEnemies = 0
-                                    gameplay.nbEnemiesMax += 2
+                                    if(gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0){
+                                        gameplay.wave++
+                                        gameplay.nbEnemies = 0
+                                        gameplay.nbEnemiesMax += 2
 
-                                    if (gameplay.wave % 4 === 0) {
-                                        gameplay.hpEnemies += 5
-                                    }
-                                    if (gameplay.wave % 5 === 0) {
-                                        gameplay.damageEnemies += 5
+                                        if(gameplay.wave % 4 === 0){
+                                            gameplay.hpEnemies += 5
+                                        }
+                                        if(gameplay.wave % 5 === 0){
+                                            gameplay.damageEnemies += 5
 
+                                        }
+                                        if(gameplay.wave % 6 === 0){
+                                            gameplay.speedEnemies += 0.5
+                                        }                          
                                     }
-                                    if (gameplay.wave % 6 === 0) {
-                                        gameplay.speedEnemies += 0.5
-                                    }
+                                }else{
+
+                                    gameplay.boss.draw()
+                                    gameplay.boss.action(ship)
+
+                                    
                                 }
-                            } else {
-
-                                gameplay.boss.draw()
-                                gameplay.boss.action(ship)
-
-
                             }
                         }
                     }
@@ -686,25 +767,25 @@ function touchStarted() {
     }
 
     if (settings.mode === 3) {
-        for (let i = 0; i < buttons.length; i++) {
+        for (let i = 0; i < buttonsMenu.length; i++) {
             if (
-                mouseX > buttons[i].x1 &&
-                mouseX < buttons[i].x2 &&
-                mouseY > buttons[i].y1 &&
-                mouseY < buttons[i].y2
+                mouseX > buttonsMenu[i].x1 &&
+                mouseX < buttonsMenu[i].x2 &&
+                mouseY > buttonsMenu[i].y1 &&
+                mouseY < buttonsMenu[i].y2
             ) {
-                if (buttons[i].label === "D I F F I C I L E") {
+                if (buttonsMenu[i].label === "D I F F I C I L E") {
                     gameplay.difficulty = 3;
                     settings.mode = 4;
                     startGameBoss()
-
-                } else {
-                    if (buttons[i].label === "M E D I U M") {
+                    
+                }else {
+                    if (buttonsMenu[i].label === "M E D I U M") {
                         gameplay.difficulty = 2;
                         settings.mode = 4;
                         startGameBoss()
-                    } else {
-                        if (buttons[i].label === "F A C I L E") {
+                    }else {
+                        if (buttonsMenu[i].label === "F A C I L E") {
                             gameplay.difficulty = 1;
                             settings.mode = 4;
                             startGameBoss()
@@ -714,26 +795,26 @@ function touchStarted() {
             }
         }
     }
-
-    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3 || settings.mode === -4) {
-        for (let i = 0; i < buttons.length; i++) {
+    
+    if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3 || settings.mode === -4 || settings.mode === -5) {
+        for (let i = 0; i < buttonsMenu.length; i++) {
             if (
-                mouseX > buttons[i].x1 &&
-                mouseX < buttons[i].x2 &&
-                mouseY > buttons[i].y1 &&
-                mouseY < buttons[i].y2
+                mouseX > buttonsMenu[i].x1 &&
+                mouseX < buttonsMenu[i].x2 &&
+                mouseY > buttonsMenu[i].y1 &&
+                mouseY < buttonsMenu[i].y2
             ) {
-                if (buttons[i].label === "V A G U E S") {
+                if (buttonsMenu[i].label === "V A G U E S") {
                     settings.mode = 1;
-                } else {
-                    if (buttons[i].label === "B O S S") {
+                }else{
+                    if (buttonsMenu[i].label === "B O S S") {
                         settings.mode = 3;
-                    } else {
-
-                        if (buttons[i].label === "M E N U") {
+                    }else{
+                   
+                        if (buttonsMenu[i].label === "M E N U") {
                             setup()
-                        } else {
-                            if (buttons[i].label === "P A R A M E T R E S") {
+                        }else{
+                            if (buttonsMenu[i].label === "P A R A M E T R E S") {
                                 settings.mode = -2;
                             }
                         }
@@ -792,7 +873,11 @@ function keyPressed() {
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight)
+    let container = document.getElementById('canvaGame');
+
+
+
+    resizeCanvas(container.offsetWidth, container.offsetHeight)
 
     hexRadius = 25
 
@@ -804,9 +889,13 @@ function windowResized() {
 
     hexGrid = createGraphics(windowWidth, windowHeight)
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
-}
 
 // Bloquer le défilement de la page mobile
 function touchMoved() {
     return false;
+}
+
+function makeFullScreen(){
+    let container = document.getElementById('canvaGame');
+    container.requestFullscreen()
 }
