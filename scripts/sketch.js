@@ -126,7 +126,7 @@ function drawButton(label, posY) {
   
     pop()
 
-    buttons.push({
+    buttonsMenu.push({
         x1: width / 2 - buttonWidth / 2,
         x2: width / 2 + buttonWidth / 2,
         y1: posY,
@@ -144,7 +144,7 @@ function mainMenu(){
     textSize(width/50)
     text("Brain Damaged Blaster Drift", width/2 - textWidth("Brain Damaged Blaster Drift")/2, height/6)
     
-    buttons = [];
+    buttonsMenu = [];
     drawButton("V A G U E S", height * 0.35);
     drawButton("B O S S", height * 0.55);
     drawButton("P A R A M E T R E S", height * 0.75);
@@ -161,7 +161,7 @@ function menuBoss(){
     textSize(width/50)
     text("B O S S", width/2 - textWidth("B O S S")/2, height/6)
     
-    buttons = [];
+    buttonsMenu = [];
     drawButton("F A C I L E", height * 0.35);
     drawButton("M E D I U M", height * 0.55);
     drawButton("D I F F I C I L E", height * 0.75);
@@ -196,7 +196,7 @@ function showControls(size, centerX, centerY){
 function menuWaves(){
     background(30)
     fill(255)
-    textSize(30)
+    textSize(width/50)
     text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
     let size =  min(width, height) / 15
     let centerX = width / 2
@@ -220,7 +220,7 @@ function menuDeath(){
 
     text(`Score : ${gameplay.score}`, width/2 - textWidth(`Score : ${gameplay.score}`)/2, height/2 + height/10)
 
-    buttons = [];
+    buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
 }
 
@@ -233,7 +233,7 @@ function menuPause(){
     textSize(width/50)
     text("Pause", width/2 - textWidth("Pause")/2, height/4)
     
-    buttons = [];
+    buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
     buttonPause.style('font-size', `${width/50}px`)
 
@@ -260,7 +260,7 @@ function menuSettings(){
     textSize(width/50)
     text("Paramètres", width/2 - textWidth("Paramètres")/2, height/4)
     
-    buttons = [];
+    buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
 
     let space = height/15
@@ -350,7 +350,11 @@ function nextSong() {
     playSong();
 }
 function setup() {
-    createCanvas(windowWidth, windowHeight)
+    let container = document.getElementById('canvaGame');
+    let canvas = createCanvas(container.offsetWidth, container.offsetHeight);
+    canvas.parent('canvaGame');
+
+    //createCanvas(windowWidth, windowHeight)
 
     details = navigator.userAgent; 
     regexp = /android|iphone|kindle|ipad/i; 
@@ -675,25 +679,25 @@ function mousePressed() {
     }
 
     if (settings.mode === 3) {
-        for (let i = 0; i < buttons.length; i++) {
+        for (let i = 0; i < buttonsMenu.length; i++) {
             if (
-                mouseX > buttons[i].x1 &&
-                mouseX < buttons[i].x2 &&
-                mouseY > buttons[i].y1 &&
-                mouseY < buttons[i].y2
+                mouseX > buttonsMenu[i].x1 &&
+                mouseX < buttonsMenu[i].x2 &&
+                mouseY > buttonsMenu[i].y1 &&
+                mouseY < buttonsMenu[i].y2
             ) {
-                if (buttons[i].label === "D I F F I C I L E") {
+                if (buttonsMenu[i].label === "D I F F I C I L E") {
                     gameplay.difficulty = 3;
                     settings.mode = 4;
                     startGameBoss()
                     
                 }else {
-                    if (buttons[i].label === "M E D I U M") {
+                    if (buttonsMenu[i].label === "M E D I U M") {
                         gameplay.difficulty = 2;
                         settings.mode = 4;
                         startGameBoss()
                     }else {
-                        if (buttons[i].label === "F A C I L E") {
+                        if (buttonsMenu[i].label === "F A C I L E") {
                             gameplay.difficulty = 1;
                             settings.mode = 4;
                             startGameBoss()
@@ -705,24 +709,24 @@ function mousePressed() {
     }
     
     if (settings.mode === 0 || settings.mode === -1 || settings.mode === -2 || settings.mode === -3 || settings.mode === -4) {
-        for (let i = 0; i < buttons.length; i++) {
+        for (let i = 0; i < buttonsMenu.length; i++) {
             if (
-                mouseX > buttons[i].x1 &&
-                mouseX < buttons[i].x2 &&
-                mouseY > buttons[i].y1 &&
-                mouseY < buttons[i].y2
+                mouseX > buttonsMenu[i].x1 &&
+                mouseX < buttonsMenu[i].x2 &&
+                mouseY > buttonsMenu[i].y1 &&
+                mouseY < buttonsMenu[i].y2
             ) {
-                if (buttons[i].label === "V A G U E S") {
+                if (buttonsMenu[i].label === "V A G U E S") {
                     settings.mode = 1;
                 }else{
-                    if (buttons[i].label === "B O S S") {
+                    if (buttonsMenu[i].label === "B O S S") {
                         settings.mode = 3;
                     }else{
                    
-                        if (buttons[i].label === "M E N U") {
+                        if (buttonsMenu[i].label === "M E N U") {
                             setup()
                         }else{
-                            if (buttons[i].label === "P A R A M E T R E S") {
+                            if (buttonsMenu[i].label === "P A R A M E T R E S") {
                                 settings.mode = -2;
                             }
                         }
