@@ -1,6 +1,7 @@
 let details, regexp, mobile
 
 let j1, j2
+let gui
 
 let ship
 let cannon
@@ -37,6 +38,13 @@ let gameplay = {
 };
 
 let volumeSlider
+
+
+let colorPickerShipDiv;
+let colorPickerShip;
+
+let colorPickerCannonDiv;
+let colorPickerCannon;
 
 
 let hexRadius
@@ -125,39 +133,6 @@ function drawButton(label, posY) {
     });
 }
 
-function mainMenu() {
-    background(30)
-
-    image(hexGrid, 0, 0)
-
-    fill(255)
-    textSize(width/50)
-    text("Brain Damaged Blaster Drift", width/2 - textWidth("Brain Damaged Blaster Drift")/2, height/6)
-    
-    buttonsMenu = [];
-    drawButton("V A G U E S", height * 0.35);
-    drawButton("B O S S", height * 0.55);
-    drawButton("P A R A M E T R E S", height * 0.75);
-
-}
-
-
-function menuBoss() {
-    background(30)
-
-    image(hexGrid, 0, 0)
-
-    fill(255)
-    textSize(width/50)
-    text("B O S S", width/2 - textWidth("B O S S")/2, height/6)
-    
-    buttonsMenu = [];
-    drawButton("F A C I L E", height * 0.35);
-    drawButton("M E D I U M", height * 0.55);
-    drawButton("D I F F I C I L E", height * 0.75);
-
-}
-
 
 
 function showControls(size, centerX, centerY) {
@@ -199,187 +174,6 @@ function showControls(size, centerX, centerY) {
 
 }
 
-function menuWaves() {
-    background(30)
-    fill(255)
-    textSize(width/50)
-
-    // Sur pc
-    text("Press Space to start", width/2 - textWidth("Press Space to start")/2, height/6)
-    
-
-    // Sur mobile
-    //text("Click to start", width/2 - textWidth("Click to start")/2, height/6)
-
-    let size =  min(width, height) / 15
-    let centerX = width / 2
-    let centerY = height / 2
-    showControls(size, centerX, centerY)
-}
-
-
-
-
-
-
-function menuDeath() {
-    background(30)
-
-    image(hexGrid, 0, 0)
-
-    fill(255)
-    textSize(width/50)
-    text("Vous êtes mort", width/2 - textWidth("Vous êtes mort")/2, height/4)
-    textSize(width/40)
-    
-    text(`Score : ${gameplay.score}`, width/2 - textWidth(`Score : ${gameplay.score}`)/2, height/2 + height/10)
-
-    buttonsMenu = [];
-    drawButton("M E N U", height * 0.35);
-}
-
-function menuBossWin(){
-    background(30)
-
-    image(hexGrid, 0, 0)
-
-    fill(255)
-    textSize(width/50)
-    text(`Vous avez battu le boss de niveau ${gameplay.difficulty}`, width/2 - textWidth(`Vous avez battu le boss de niveau ${gameplay.difficulty}`)/2, height/4)
-
-    buttonsMenu = [];
-    drawButton("M E N U", height * 0.35);
-
-}
-
-function menuPause() {
-    background(30)
-
-
-    fill(255)
-    textSize(width/50)
-    text("Pause", width/2 - textWidth("Pause")/2, height/4)
-    
-    buttonsMenu = [];
-    drawButton("M E N U", height * 0.35);
-
-    let canvaGame = document.getElementById("canvaGame");
-    let sizeCanva = canvaGame.getBoundingClientRect();
-
-    
-    let buttonWidth = width / 4; 
-    let buttonHeight = height / 15; 
-  
-    buttonPause.style("font-size", `${width / 50}px`);
-    buttonPause.size(buttonWidth, buttonHeight);
-  
-    buttonPause.position(sizeCanva.left + sizeCanva.width / 2 - buttonWidth / 2, sizeCanva.top + sizeCanva.height / 2 - buttonHeight / 2);
-
-
-  
-    let size =  min(width, height) / 20
-    let centerX = width / 6
-    let centerY = height / 2
-
-    showControls(size, centerX, centerY)
-
-
-}
-
-let colorPickerShipDiv;
-let colorPickerShip;
-
-let colorPickerCannonDiv;
-let colorPickerCannon;
-function menuSettings() {
-    background(30)
-    image(hexGrid, 0, 0)
-
-    fill(255)
-    textSize(width/50)
-    text("Paramètres", width/2 - textWidth("Paramètres")/2, height/4)
-    
-    buttonsMenu = [];
-    drawButton("M E N U", height * 0.35);
-
-    let space = height / 15
-
-    // Volume
-    fill(255)
-    textSize(width / 50)
-    if (!volumeSlider) {
-        volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
-    }
-
-    let canvaGame = document.getElementById("canvaGame");
-    let sizeCanva = canvaGame.getBoundingClientRect();
-
-    
-    volumeSlider.position(sizeCanva.left+width/2 - volumeSlider.width/2, sizeCanva.top +height/2 + space);
-
-    if (assets.gameMusics[gameplay.currentSongIndex].isPlaying()) {
-        assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value() / 100)
-    }
-
-    gameplay.volumeMusic = volumeSlider.value()
-
-    fill(255)
-    textSize(width / 50)
-    text(`Volume : ${volumeSlider.value()}`, width / 2 - textWidth(`Volume : ${volumeSlider.value()}`) / 2, height / 2 + space * 2)
-
-    ship.drawBaseShip()
-
-    textSize(width / 50)
-
-    if (!colorPickerShipDiv) {
-        colorPickerShipDiv = createDiv();
-    }
-    
-    colorPickerShipDiv.position(sizeCanva.left+width/2 - width/4, sizeCanva.top +height / 2 + space * 3);
-
-
-
-    colorPickerShipDiv.style('z-index', '10');
-    colorPickerShipDiv.style('position', 'absolute');
-
-    if (!colorPickerShip) {
-        colorPickerShip = createColorPicker(settings.colorShip);
-    }
-    colorPickerShipDiv.child(colorPickerShip);
-
-    colorPickerShip.style('width', `${width / 20}px`);
-    colorPickerShip.style('height', `${height / 20}px`);
-    colorPickerShip.style('background-color', 'transparent');
-    colorPickerShip.style('border', 'none');
-    settings.colorShip = colorPickerShip.color()
-
-    text(`Couleur vaisseau`, width / 2 - width / 4 - textWidth('Couleur vaisseau') / 2, height / 2 + space * 5)
-
-    if (!colorPickerCannonDiv) {
-        colorPickerCannonDiv = createDiv();
-    }
-    
-
-  
-    
-    colorPickerCannonDiv.position(sizeCanva.left+width/2 + width/4, sizeCanva.top +height / 2 + space * 3);
-
-    colorPickerCannonDiv.style('z-index', '10');
-    colorPickerCannonDiv.style('position', 'absolute');
-
-    if (!colorPickerCannon) {
-        colorPickerCannon = createColorPicker(settings.colorCannon);
-    }
-    colorPickerCannonDiv.child(colorPickerCannon);
-
-    colorPickerCannon.style('width', `${width / 20}px`);
-    colorPickerCannon.style('height', `${height / 20}px`);
-    colorPickerCannon.style('background-color', 'transparent');
-    colorPickerCannon.style('border', 'none');
-    settings.colorCannon = colorPickerCannon.color()
-
-    text(`Couleur canons`, width / 2 + width / 4 - textWidth('Couleur canons') / 2, height / 2 + space * 5)
-}
 
 function playSong() {
     if (gameplay.currentSongIndex < assets.gameMusics.length) {
@@ -394,7 +188,7 @@ function nextSong() {
     playSong();
 }
 
-let canvas
+let canvasC
 
 function setup() {
     handleCanvas()
@@ -521,9 +315,11 @@ function startGameWave() {
 }
 
 function draw() {
+    drawGui()
 
     // Gérer les interruptions de jeu (pause, etc.)
     handleGameInterruptions();
+
 
     // Gérer l'interface du jeu selon le mode
     switch (settings.mode) {

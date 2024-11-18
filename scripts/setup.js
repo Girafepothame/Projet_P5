@@ -14,14 +14,15 @@ function resetElement(element, defaultValue, settingKey) {
 function initColors() {
     colorPickerShip = resetElement(colorPickerShip, color(255, 255, 255), 'colorShip');
     colorPickerCannon = resetElement(colorPickerCannon, color(255, 255, 255), 'colorCannon');
-    resetElement(colorPickerShipDiv, null, 'colorShip');
-    resetElement(colorPickerCannonDiv, null, 'colorCannon');
+    colorPickerShipDiv = resetElement(colorPickerShipDiv, null, 'colorShip');
+    colorPickerCannonDiv = resetElement(colorPickerCannonDiv, null, 'colorCannon');
 }
 
 // Fonction principale pour gérer les réglages
 function handleSettings() {
     settings.mode = 0;
     initColors();
+    volumeSlider = resetElement(volumeSlider, 50, 'volumeSlider')
     assets.gameMusics = shuffle(assets.gameMusics);
 }
 
@@ -35,8 +36,8 @@ function handleNavigator() {
 // Fonction pour configurer le canvas
 function handleCanvas() {
     const container = document.getElementById('canvaGame');
-    canvas = createCanvas(container.offsetWidth, container.offsetHeight);
-    canvas.parent('canvaGame');
+    canvasC = createCanvas(container.offsetWidth, container.offsetHeight);
+    canvasC.parent('canvaGame');
 
     gui = createGui();
     textFont(assets.font);

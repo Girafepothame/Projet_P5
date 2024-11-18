@@ -2,9 +2,14 @@
 
 
 function handleGameInterruptions() {
+
+    if (ship.hp <= 0) {
+        settings.mode = -1
+    }
+
     // Vérifier si le jeu est en pause
     if (settings.mode === -3 || settings.mode === -4) {
-        drawPauseScreen();
+        menuPause();
         return; // Empêche le reste du jeu de se dessiner quand il est en pause
     }
 
@@ -24,14 +29,29 @@ function handleGameInterruptions() {
     if (settings.mode >= 0) {
         // Mettre à jour le jeu normalement (ajouter d'autres interruptions spécifiques si nécessaire)
     }
+
 }
 
-function drawPauseScreen() {
-    // Code pour dessiner l'écran de pause
-    background(30);
-    fill(255);
-    textSize(width / 20);
-    text("Jeu en Pause", width / 2 - textWidth("Jeu en Pause") / 2, height / 2);
+function menuPause() {
+    background(30)
+
+
+    fill(255)
+    textSize(width / 50)
+    text("Pause", width / 2 - textWidth("Pause") / 2, height / 4)
+
+    buttons = [];
+    drawButton("M E N U", height * 0.35);
+    buttonPause.style('font-size', `${width / 50}px`)
+
+    buttonPause.position(width / 2 - buttonPause.width / 1.5, height / 2)
+    let size = min(width, height) / 20
+    let centerX = width / 6
+    let centerY = height / 2
+
+    showControls(size, centerX, centerY)
+
+
 }
 
 function drawGameOverScreen() {
@@ -81,7 +101,6 @@ function gameWaves() {
     ship.update();
 
     if (mobile) {
-        drawGui();
         gameplay.cursor.setMobile();
     }
 
@@ -102,6 +121,10 @@ function displayEnemies() {
 }
 
 function checkWaveProgress() {
+    noStroke()
+    fill(255)
+    text(`Score : ${gameplay.score}`, width / 18, height / 8)
+    text(`Vagues : ${gameplay.wave}`, width / 1.15, height / 8)
     if (gameplay.nbEnemiesMax === gameplay.nbEnemies && enemies.length === 0) {
         gameplay.wave++;
         gameplay.nbEnemies = 0;
@@ -150,19 +173,36 @@ function menuSettings() {
     text("Paramètres", width / 2 - textWidth("Paramètres") / 2, height / 4);
     buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
+    
+
     configureVolumeSlider();
     configureColorPickers();
 }
 
 function configureVolumeSlider() {
-    let space = height / 15;
     if (!volumeSlider) {
         volumeSlider = createSlider(0, 100, gameplay.volumeMusic);
     }
-    let canvaGame = document.getElementById("canvaGame");
-    let sizeCanva = canvaGame.getBoundingClientRect();
-    volumeSlider.position(sizeCanva.left + width / 2 - volumeSlider.width / 2, sizeCanva.top + height / 2 + space);
+    let canvaGame = document.querySelector("#canvaGame");
+    let canvaData = canvaGame.getBoundingClientRect()
+        
+    let hauteur = canvaGame.offsetHeight;
+    let largeur = canvaGame.offsetWidth;
+
+    
+    volumeSlider.position(canvaData.left + largeur/2 - volumeSlider.width/2, canvaData.top + hauteur/2 + height/10);
+
+    if(assets.gameMusics[gameplay.currentSongIndex].isPlaying()){
+        assets.gameMusics[gameplay.currentSongIndex].setVolume(volumeSlider.value()/100)
+    }
+
     gameplay.volumeMusic = volumeSlider.value();
+
+    fill(255)
+    textSize(width/50)
+    text(`Volume : ${volumeSlider.value()}`, width/2 - textWidth(`Volume : ${volumeSlider.value()}`)/2, height/2 + height/12.5)
+
+    ship.drawBaseShip()
 }
 
 function configureColorPickers() {
@@ -172,21 +212,51 @@ function configureColorPickers() {
 }
 
 function createColorPickerShip() {
-    if (!colorPickerShipDiv) {
+if (!colorPickerShipDiv) {
         colorPickerShipDiv = createDiv();
     }
-    colorPickerShipDiv.position(width / 2 - width / 4, height / 2 + height / 15);
+
+    colorPickerShipDiv.position(width/2 - width/4, height / 2 + height/15 * 3);
+    colorPickerShipDiv.style('z-index', '10');
+    colorPickerShipDiv.style('position', 'absolute');
+    
+    if (!colorPickerShip) {
+        colorPickerShip = createColorPicker(settings.colorShip);
+    }
     colorPickerShipDiv.child(colorPickerShip);
-    settings.colorShip = colorPickerShip.color();
+
+    colorPickerShip.style('width', `${width/20}px`);
+    colorPickerShip.style('height', `${height/20}px`);
+    colorPickerShip.style('background-color', 'transparent');
+    colorPickerShip.style('border', 'none');
+    settings.colorShip = colorPickerShip.color()
+
+    text(`Couleur vaisseau`, width/2 - width/4  - textWidth('Couleur vaisseau')/2, height/2 + height/15 *5)
+
+    
 }
 
 function createColorPickerCannon() {
     if (!colorPickerCannonDiv) {
         colorPickerCannonDiv = createDiv();
     }
-    colorPickerCannonDiv.position(width / 2 + width / 4, height / 2 + height / 15);
+
+    colorPickerCannonDiv.position(width/2 + width/4, height / 2 + height/15 * 3);
+    colorPickerCannonDiv.style('z-index', '10');
+    colorPickerCannonDiv.style('position', 'absolute');
+    
+    if (!colorPickerCannon) {
+        colorPickerCannon = createColorPicker(settings.colorCannon);
+    }
     colorPickerCannonDiv.child(colorPickerCannon);
-    settings.colorCannon = colorPickerCannon.color();
+
+    colorPickerCannon.style('width', `${width/20}px`);
+    colorPickerCannon.style('height', `${height/20}px`);
+    colorPickerCannon.style('background-color', 'transparent');
+    colorPickerCannon.style('border', 'none');
+    settings.colorCannon = colorPickerCannon.color()
+
+    text(`Couleur canons`, width/2 + width/4 - textWidth('Couleur canons')/2, height/2 + height/15 *5)
 }
 
 
