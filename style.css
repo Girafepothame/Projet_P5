@@ -39,3 +39,6 @@ h2,p{
   height: 60vh;
 }
 
+.warning{
+  color: red;
+}
