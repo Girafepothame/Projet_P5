@@ -235,9 +235,21 @@ function menuPause(){
     
     buttonsMenu = [];
     drawButton("M E N U", height * 0.35);
-    buttonPause.style('font-size', `${width/50}px`)
 
-    buttonPause.position(width/2 - buttonPause.width/1.5, height/2)
+    let canvaGame = document.getElementById("canvaGame");
+    let sizeCanva = canvaGame.getBoundingClientRect();
+
+    
+    let buttonWidth = width / 4; 
+    let buttonHeight = height / 15; 
+  
+    buttonPause.style("font-size", `${width / 50}px`);
+    buttonPause.size(buttonWidth, buttonHeight);
+  
+    buttonPause.position(sizeCanva.left + sizeCanva.width / 2 - buttonWidth / 2, sizeCanva.top + sizeCanva.height / 2 - buttonHeight / 2);
+
+
+  
     let size =  min(width, height) / 20
     let centerX = width / 6
     let centerY = height / 2
@@ -349,9 +361,10 @@ function nextSong() {
     gameplay.currentSongIndex = (gameplay.currentSongIndex + 1) % assets.gameMusics.length;
     playSong();
 }
+let canvas
 function setup() {
     let container = document.getElementById('canvaGame');
-    let canvas = createCanvas(container.offsetWidth, container.offsetHeight);
+    canvas = createCanvas(container.offsetWidth, container.offsetHeight);
     canvas.parent('canvaGame');
 
     //createCanvas(windowWidth, windowHeight)
@@ -801,5 +814,11 @@ function windowResized() {
 
     hexGrid = createGraphics(windowWidth, windowHeight)
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius)
-
 }
+
+function makeFullScreen(){
+    let container = document.getElementById('canvaGame');
+    container.requestFullscreen()
+}
+
+

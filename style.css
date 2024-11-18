@@ -20,6 +20,16 @@ h2,p{
   max-width: 1400px; 
   margin: auto;
   padding: 2% 10%;
+  width: 80%;
+  height: 60vh;
+}
+
+#fullScreen {
+  position: relative;
+  bottom : 7%;
+  left : 95%;
+  background: transparent;
+  border : none;
 }
 
 #canvaGame {
