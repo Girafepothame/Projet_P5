@@ -194,6 +194,10 @@ function nextSong() {
 let canvasC
 
 function setup() {
+    const fullScreenButton = document.getElementById("fullScreen");
+    fullScreenButton.addEventListener("click", makeFullScreen);
+    fullScreenButton.addEventListener("touchstart", makeFullScreen);
+    
     handleCanvas()
 
     handleJoysticks()

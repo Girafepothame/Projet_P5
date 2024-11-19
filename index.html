@@ -1,46 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
-    <script src="lib/p5.touchgui.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8" />
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
+  <script src="lib/p5.touchgui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
 
-    <script src="scripts/preload.js"></script>
-    <script src="scripts/setup.js"></script>
-    <script src="scripts/draw.js"></script>
-    <script src="scripts/sketch.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
 
-    <script src="scripts/classes/ship.js"></script>
-    <script src="scripts/classes/cursor.js"></script>
-    <script src="scripts/classes/cannon.js"></script>
-    <!-- <script src="scripts/classes/joystick.js"></script> -->
-    <script src="scripts/classes/trail.js"></script>
-    <script src="scripts/classes/Bullet.js"></script>
-    <script src="scripts/classes/Enemy.js"></script>
-    <script src="scripts/classes/boss.js"></script>
+  <script src="scripts/preload.js"></script>
+  <script src="scripts/setup.js"></script>
+  <script src="scripts/draw.js"></script>
+  <script src="scripts/sketch.js"></script>
 
-  </head>
-  <body>
-    <h1>Brain Damaged Blaster Drift</h1>
+  <script src="scripts/classes/ship.js"></script>
+  <script src="scripts/classes/cursor.js"></script>
+  <script src="scripts/classes/cannon.js"></script>
+  <script src="scripts/classes/trail.js"></script>
+  <script src="scripts/classes/Bullet.js"></script>
+  <script src="scripts/classes/Enemy.js"></script>
+  <script src="scripts/classes/boss.js"></script>
 
-    <h2>Description</h2>
-    <p>Brain Damaged Blaster Drift est un jeu de tir en 2D où vous incarnez un vaisseau spatial. Le but est de survivre le plus longtemps possible face à des vagues d'ennemis de plus en plus difficile. Vous pouvez également combattre des boss de différents niveaux.</p>
-    <p class="warning">ATTENTION : Le temps de chargement peut être long (environ 5 minutes). DE PLUS : Privilégiez le mode plein écran sur mobile pour une expérience moins éxecrable</p>
-    <div class="container">
-      <div id="canvaGame"></div>
-      <button id="fullScreen" onclick="makeFullScreen()">
-        <img width="30" height="30" src="assets/Img/fullScreen.png" alt="full-screen"/>    
-      </button>
+</head>
 
-    </div>
+<body>
+  <h1>Brain Damaged Blaster Drift</h1>
+
+  <h2>Description</h2>
+  <p>Brain Damaged Blaster Drift est un jeu de tir en 2D où vous incarnez un vaisseau spatial. Le but est de survivre le
+    plus longtemps possible face à des vagues d'ennemis de plus en plus difficile. Vous pouvez également combattre des
+    boss de différents niveaux.</p>
+  <p class="warning">ATTENTION : Le temps de chargement peut être long (environ 5 minutes). DE PLUS : Privilégiez le
+    mode plein écran pour une expérience plus agréable</p>
+  <div class="container">
+    <div id="canvaGame"></div>
+    <button id="fullScreen" type="button">
+      <img width="30" height="30" src="assets/Img/fullScreen.png" alt="full-screen" />
+    </button>
+
+  </div>
 
 
-    <h3>Développé par Loic FABRE et Thomas COSSON</h3>
+  <h3>Développé par Loïc FABRE et Thomas COSSON</h3>
 
 
-  </body>
+</body>
+
 </html>
