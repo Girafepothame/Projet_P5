@@ -150,6 +150,7 @@ function checkWaveProgress() {
     }
 }
 
+
 function menuBoss() {
     background(30);
     image(hexGrid, 0, 0);
@@ -160,6 +161,23 @@ function menuBoss() {
     drawButton("F A C I L E", height * 0.35);
     drawButton("M E D I U M", height * 0.55);
     drawButton("D I F F I C I L E", height * 0.75);
+}
+
+
+function gameBoss() {
+    background(30)
+    image(hexGrid, 0, 0)
+    ship.draw()
+    ship.update()
+
+    if (mobile) {
+        drawGui()
+        gameplay.cursor.setMobile()
+        ship.setMobile()
+    }
+
+    gameplay.boss.draw()
+    gameplay.boss.action(ship)
 }
 
 function menuDeath() {
@@ -214,7 +232,6 @@ function configureVolumeSlider() {
     textSize(width/50)
     text(`Volume : ${volumeSlider.value()}`, width/2 - textWidth(`Volume : ${volumeSlider.value()}`)/2, height/2 + height/12.5)
 
-    ship.drawBaseShip()
 }
 
 function configureColorPickers() {

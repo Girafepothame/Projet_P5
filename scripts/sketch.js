@@ -253,6 +253,7 @@ function spawnEnemyBoss() {
 let intervalGame
 
 function startGameBoss() {
+    console.log("TAMER")
     enemies = []
     gameplay.score = 0
     gameplay.nbEnemies = 0
@@ -339,6 +340,9 @@ function draw() {
             break;
         case 3: // Menu Boss
             menuBoss();
+            break;
+        case 4:
+            gameBoss()
             break;
         case -1: // Menu Mort
             menuDeath();
