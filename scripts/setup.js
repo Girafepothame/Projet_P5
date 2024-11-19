@@ -1,4 +1,4 @@
-// Fonction pour réinitialiser et nettoyer les éléments
+
 function resetElement(element, defaultValue, settingKey) {
     if (element) {
         element.remove();
@@ -10,7 +10,7 @@ function resetElement(element, defaultValue, settingKey) {
     return element;
 }
 
-// Fonction pour initialiser les couleurs des éléments (vaisseau et canon)
+
 function initColors() {
     colorPickerShip = resetElement(colorPickerShip, color(255, 255, 255), 'colorShip');
     colorPickerCannon = resetElement(colorPickerCannon, color(255, 255, 255), 'colorCannon');
@@ -18,7 +18,7 @@ function initColors() {
     colorPickerCannonDiv = resetElement(colorPickerCannonDiv, null, 'colorCannon');
 }
 
-// Fonction principale pour gérer les réglages
+
 function handleSettings() {
     settings.mode = 0;
     initColors();
@@ -33,7 +33,7 @@ function handleNavigator() {
     mobile = regexp.test(details);
 }
 
-// Fonction pour configurer le canvas
+
 function handleCanvas() {
     const container = document.getElementById('canvaGame');
     canvasC = createCanvas(container.offsetWidth, container.offsetHeight);
@@ -56,15 +56,14 @@ function backgroundGrid() {
     drawHexGrid(hexGrid, cols, rows, hexWidth, hexHeight, hexRadius);
 }
 
-// Fonction pour initialiser les joysticks
-function handleJoysticks() {
-    const joystickSize = min(width, height) / 2.5;  // 20% de la taille la plus petite de l'écran
 
-    // Créer et configurer les deux joysticks
+function handleJoysticks() {
+    const joystickSize = min(width, height) / 4
+
     j1 = createJoystick("Déplacement", width / 10, height - joystickSize - 20, joystickSize, joystickSize, -1, 1, 1, -1);
     j2 = createJoystick("Rotation", width - width / 10 - joystickSize, height - joystickSize - 20, joystickSize, joystickSize, -1, 1, 1, -1);
 
-    // Appliquer les mêmes styles aux deux joysticks
+    
     const joystickStyle = {
         strokeBg: color("#F7ECE1"),
         strokeBgHover: color("#F7ECE1"),

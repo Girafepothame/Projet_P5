@@ -27,63 +27,50 @@ class Ship {
     }
 
     update() {
-        
         let direction = createVector(this.cursor.x - this.pos.x, this.cursor.y - this.pos.y)
         let targetAngle = direction.heading()
 
-        // Normalize angles to be between -PI and PI
-        targetAngle = this.normalizeAngle(targetAngle);
-        this.angle = this.normalizeAngle(this.angle); // Normalize current angle
+        targetAngle = this.normalizeAngle(targetAngle)
+        this.angle = this.normalizeAngle(this.angle)
 
-        // Calculate the difference in angles and normalize it to the shortest path
-        let angleDiff = targetAngle - this.angle;
+        let angleDiff = targetAngle - this.angle
 
-        // Normalize angle difference to prevent crossing 180°
         if (angleDiff > PI) {
-            angleDiff -= TWO_PI;
+            angleDiff -= TWO_PI
         } else if (angleDiff < -PI) {
-            angleDiff += TWO_PI;
+            angleDiff += TWO_PI
         }
 
-        // Use lerp to smoothly transition the angle
-        this.angle = lerp(this.angle, this.angle + angleDiff, 0.1); // 0.1 can be adjusted for speed of rotation
+        this.angle = lerp(this.angle, this.angle + angleDiff, 0.1)
 
-        // Handle movement
         this.handleMovement()
 
-        // Add velocity
         this.velocity.add(this.acceleration);
         this.pos.add(this.velocity);
         this.acceleration.mult(0);
 
-        // Trail update
-        this.trail.add(this.pos.copy());
+        this.trail.add(this.pos.copy())
 
-        // Edge wrapping
         this.edges();
     }
 
     handleMovement() {
-        // Si un joystick est fourni, on déplace le vaisseau avec le joystick
         if (this.mobile) {
             this.moveWithJoystick();
         } else {
-            // Sinon, on déplace le vaisseau avec les touches du clavier
-            if (keyIsDown(90)) this.moveForward();  // Touche Z
-            if (keyIsDown(83)) this.moveBackward(); // Touche S
-            if (keyIsDown(81)) this.moveLeft();     // Touche Q
-            if (keyIsDown(68)) this.moveRight();    // Touche D
+            if (keyIsDown(90)) this.moveForward();
+            if (keyIsDown(83)) this.moveBackward();
+            if (keyIsDown(81)) this.moveLeft();
+            if (keyIsDown(68)) this.moveRight();
         }
     }
 
-    // Déplacement avec le joystick
     moveWithJoystick() {
-        let moveX = this.joystick.valX;  // Valeur entre -1 et 1 (gauche/droite)
-        let moveY = this.joystick.valY;  // Valeur entre -1 et 1 (haut/bas)
+        let moveX = this.joystick.valX;
+        let moveY = this.joystick.valY;
 
-        // Appliquer la vitesse dans la direction du joystick
-        this.pos.x += moveX * this.speed; // Déplacer selon l'axe horizontal
-        this.pos.y += moveY * this.speed; // Déplacer selon l'axe vertical
+        this.pos.x += moveX * this.speed;
+        this.pos.y += moveY * this.speed;
     }
 
     moveForward() {
@@ -103,13 +90,12 @@ class Ship {
         let rightDir = p5.Vector.fromAngle(this.angle + PI / 2).mult(this.speed);
         this.pos.add(rightDir);
     }
-    
+
     normalizeAngle(angle) {
         return angle % TWO_PI;
     }
 
     edges() {
-        // Bordures de l'écran (wrap around)
         this.pos.x = (this.pos.x + width) % width;
         this.pos.y = (this.pos.y + height) % height;
     }
@@ -119,7 +105,7 @@ class Ship {
 
         push();
         translate(this.pos.x, this.pos.y);
-        rotate(this.angle); // Rotation du vaisseau
+        rotate(this.angle);
 
         fill(settings.colorShip);
         stroke(255);
@@ -163,12 +149,12 @@ class Ship {
 
     body() {
         beginShape();
-        vertex(this.h * 0.8, 0);  // Inversé (x et y)
-        vertex(0, this.w / 2);     // Inversé (x et y)
-        vertex(0, this.w / 4);     // Inversé (x et y)
-        vertex(-this.h * 0.2, 0);   // Inversé (x et y)
-        vertex(0, -this.w / 4);    // Inversé (x et y)
-        vertex(0, -this.w / 2);    // Inversé (x et y)
+        vertex(this.h * 0.8, 0);
+        vertex(0, this.w / 2);
+        vertex(0, this.w / 4);
+        vertex(-this.h * 0.2, 0);
+        vertex(0, -this.w / 4);
+        vertex(0, -this.w / 2);
         endShape(CLOSE);
 
         strokeWeight(5);

@@ -7,27 +7,19 @@ function handleGameInterruptions() {
         settings.mode = -1
     }
 
-    // Vérifier si le jeu est en pause
     if (settings.mode === -3 || settings.mode === -4) {
         menuPause();
         return; // Empêche le reste du jeu de se dessiner quand il est en pause
     }
 
-    // Vérifier si le joueur a perdu
     if (settings.mode === -1) {
         menuDeath();
-        return; // Empêche le reste du jeu de se dessiner quand le joueur est mort
+        return
     }
 
-    // Vérifier si le joueur a gagné contre le boss
     if (settings.mode === -5) {
         drawWinScreen();
-        return; // Empêche le reste du jeu de se dessiner quand le joueur a gagné
-    }
-
-    // Si le jeu est en mode "normal" ou en mode "vagues", continuer à mettre à jour le jeu
-    if (settings.mode >= 0) {
-        // Mettre à jour le jeu normalement (ajouter d'autres interruptions spécifiques si nécessaire)
+        return
     }
 
 }
@@ -60,7 +52,6 @@ function menuPause() {
 }
 
 function drawGameOverScreen() {
-    // Code pour dessiner l'écran de fin de jeu
     background(30);
     fill(255);
     textSize(width / 20);
@@ -248,7 +239,6 @@ function configureVolumeSlider() {
 }
 
 function configureColorPickers() {
-    // Créer les color pickers pour le vaisseau et les canons
     createColorPickerShip();
     createColorPickerCannon();
 }
