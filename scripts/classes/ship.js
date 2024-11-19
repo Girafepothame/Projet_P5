@@ -1,35 +1,35 @@
 class Ship {
     constructor(x, y, w, h, joystick) {
-        this.pos = createVector(x, y);
-        this.w = w;
-        this.h = h;
-        this.angle = 0; // Angle initial (toujours fixe si pas de contrôle de rotation)
-        this.speed = 5; // Vitesse de déplacement
-        this.velocity = createVector(0, 0);
-        this.acceleration = createVector(0, 0);
-        this.hp = 100;
-        this.hpMax = 100;
-        this.trail = new Trail(w / 3, h);
+        this.pos = createVector(x, y)
+        this.w = w
+        this.h = h
+        this.angle = 0
+        this.speed = 5
+        this.velocity = createVector(0, 0)
+        this.acceleration = createVector(0, 0)
+        this.hp = 100
+        this.hpMax = 100
+        this.trail = new Trail(w / 3, h)
 
-        this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, -this.w);
-        this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, this.w);
+        this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, -this.w)
+        this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, this.w)
 
-        this.bullets = [];
-        this.damage = 50;
+        this.bullets = []
+        this.damage = 50
 
-        this.cursor = gameplay.cursor; // Pour la visée
-        this.joystick = joystick; // Joystick passé en paramètre
+        this.cursor = gameplay.cursor
+        this.joystick = joystick
         this.mobile = false
     }
 
     setMobile() {
-        this.mobile = true;
+        this.mobile = true
     }
 
     update() {
-        // Direction towards the mouse
-        let direction = createVector(this.cursor.x - this.pos.x, this.cursor.y - this.pos.y);
-        let targetAngle = direction.heading(); // Angle towards the mouse
+        
+        let direction = createVector(this.cursor.x - this.pos.x, this.cursor.y - this.pos.y)
+        let targetAngle = direction.heading()
 
         // Normalize angles to be between -PI and PI
         targetAngle = this.normalizeAngle(targetAngle);

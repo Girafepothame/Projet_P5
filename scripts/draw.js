@@ -15,7 +15,7 @@ function handleGameInterruptions() {
 
     // Vérifier si le joueur a perdu
     if (settings.mode === -1) {
-        drawGameOverScreen();
+        menuDeath();
         return; // Empêche le reste du jeu de se dessiner quand le joueur est mort
     }
 
@@ -57,8 +57,6 @@ function menuPause() {
     let centerY = height / 2
 
     showControls(size, centerX, centerY)
-
-
 }
 
 function drawGameOverScreen() {
@@ -70,11 +68,16 @@ function drawGameOverScreen() {
 }
 
 function drawWinScreen() {
-    // Code pour dessiner l'écran de victoire contre le boss
-    background(30);
-    fill(255);
-    textSize(width / 20);
-    text("Victoire !", width / 2 - textWidth("Victoire !") / 2, height / 2);
+    background(30)
+
+    image(hexGrid, 0, 0)
+
+    fill(255)
+    textSize(width/50)
+    text(`Vous avez battu le boss de niveau ${gameplay.difficulty}`, width/2 - textWidth(`Vous avez battu le boss de niveau ${gameplay.difficulty}`)/2, height/4)
+
+    buttonsMenu = [];
+    drawButton("M E N U", height * 0.35);
 }
 
 
@@ -182,6 +185,12 @@ function gameBoss() {
 
     gameplay.boss.draw()
     gameplay.boss.action(ship)
+
+    if (gameplay.boss.hp <= 0 && gameplay.boss.tabEnemy.length == 0) {
+        settings.mode = -5
+    }
+    
+
 }
 
 function menuDeath() {

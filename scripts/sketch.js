@@ -256,7 +256,6 @@ function spawnEnemyBoss() {
 let intervalGame
 
 function startGameBoss() {
-    console.log("TAMER")
     enemies = []
     gameplay.score = 0
     gameplay.nbEnemies = 0
@@ -320,9 +319,22 @@ function startGameWave() {
 
 function draw() {
 
+    if (settings.mode != -3 && settings.mode != -4) {
+        if (buttonPause) {
+            buttonPause.remove();
+            buttonPause = null;
+        }
+    }
+
+    if (settings.mode != 4 && settings.mode != 2 && settings.mode != -3 && settings.mode != -4) {
+        if (intervalGame) {
+            clearInterval(intervalGame);
+            intervalGame = null;
+        }
+    }
+
     // Gérer les interruptions de jeu (pause, etc.)
     handleGameInterruptions();
-
 
     // Gérer l'interface du jeu selon le mode
     switch (settings.mode) {
@@ -347,18 +359,8 @@ function draw() {
         case 4:
             gameBoss()
             break;
-        case -1: // Menu Mort
-            menuDeath();
-            break;
         case -2: // Paramètres
             menuSettings();
-            break;
-        case -3: // Pause dans le jeu
-        case -4: // Pause dans le boss
-            menuPause();
-            break;
-        case -5: // Victoire contre le boss
-            menuBossWin();
             break;
         default:
             // Pour tout autre mode non spécifié
@@ -446,7 +448,7 @@ function touchStarted() {
 
 
 function keyPressed() {
-    if (settings.mode === 2) {
+    if (settings.mode == 2) {
         if (key === "p" || key === "P") {
             settings.mode = -3
             buttonPause = createButton("Reprendre partie")
@@ -464,12 +466,13 @@ function keyPressed() {
             buttonPause.mouseOut(() => {
                 buttonPause.style('background-color', 'rgba(0,0,0,0)')
             })
-            buttonPause.touchStarted(() => {
+            buttonPause.mousePressed(() => {
+                console.log("iciiiii")
                 settings.mode = 2
             })
         }
     }
-    if (settings.mode === 4) {
+    if (settings.mode == 4) {
         if (key === "p" || key === "P") {
             settings.mode = -4
             buttonPause = createButton("Reprendre partie")
@@ -487,7 +490,7 @@ function keyPressed() {
             buttonPause.mouseOut(() => {
                 buttonPause.style('background-color', 'rgba(0,0,0,0)')
             })
-            buttonPause.touchStarted(() => {
+            buttonPause.mousePressed(() => {
                 settings.mode = 4
             })
         }
