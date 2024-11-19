@@ -201,7 +201,7 @@ function setup() {
 
     handleSettings()
 
-    ship = new Ship(width / 2, height / 2, width/50, width/25, j2);
+    ship = new Ship(width / 2, height / 2, width/50, width/25, j1);
 }
 
 function spawnEnemy() {
@@ -315,7 +315,6 @@ function startGameWave() {
 }
 
 function draw() {
-    drawGui()
 
     // Gérer les interruptions de jeu (pause, etc.)
     handleGameInterruptions();
@@ -357,6 +356,7 @@ function draw() {
         default:
             // Pour tout autre mode non spécifié
             break;
+            
     }
 
     // Dessiner le curseur
@@ -380,6 +380,7 @@ function touchStarted() {
                 mouseY < buttonsMenu[i].y2
             ) {
                 if (buttonsMenu[i].label === "D I F F I C I L E") {
+                    console.log("oui")
                     gameplay.difficulty = 3;
                     settings.mode = 4;
                     startGameBoss()
@@ -501,7 +502,9 @@ function windowResized() {
 
 // Bloquer le défilement de la page mobile
 function touchMoved() {
-    return false;
+    if (settings.mode == 2 || settings.mode == 4) {
+        return false;
+    }
 }
 
 function makeFullScreen(){

@@ -108,7 +108,9 @@ function gameWaves() {
     ship.update();
 
     if (mobile) {
+        drawGui()
         gameplay.cursor.setMobile();
+        ship.setMobile()
     }
 
     // Afficher les ennemis et mettre à jour les vagues

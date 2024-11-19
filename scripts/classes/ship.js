@@ -1,10 +1,10 @@
 class Ship {
-    constructor(x, y, w, h) {
+    constructor(x, y, w, h, joystick) {
         this.pos = createVector(x, y);
         this.w = w;
         this.h = h;
-        this.angle = 0; // Initial angle
-        this.speed = 5;
+        this.angle = 0; // Angle initial (toujours fixe si pas de contrôle de rotation)
+        this.speed = 5; // Vitesse de déplacement
         this.velocity = createVector(0, 0);
         this.acceleration = createVector(0, 0);
         this.hp = 100;
@@ -14,10 +14,16 @@ class Ship {
         this.leftCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, -this.w);
         this.rightCannon = new Cannon(this, this.w / 2, this.h / 2, -this.h / 4, this.w);
 
-        this.bullets = []
-        this.damage = 50
+        this.bullets = [];
+        this.damage = 50;
 
-        this.cursor = gameplay.cursor
+        this.cursor = gameplay.cursor; // Pour la visée
+        this.joystick = joystick; // Joystick passé en paramètre
+        this.mobile = false
+    }
+
+    setMobile() {
+        this.mobile = true;
     }
 
     update() {
@@ -55,15 +61,29 @@ class Ship {
 
         // Edge wrapping
         this.edges();
-
-
     }
 
     handleMovement() {
-        if (keyIsDown(90)) this.moveForward()
-        if (keyIsDown(83)) this.moveBackward()
-        if (keyIsDown(81)) this.moveLeft()
-        if (keyIsDown(68)) this.moveRight()
+        // Si un joystick est fourni, on déplace le vaisseau avec le joystick
+        if (this.mobile) {
+            this.moveWithJoystick();
+        } else {
+            // Sinon, on déplace le vaisseau avec les touches du clavier
+            if (keyIsDown(90)) this.moveForward();  // Touche Z
+            if (keyIsDown(83)) this.moveBackward(); // Touche S
+            if (keyIsDown(81)) this.moveLeft();     // Touche Q
+            if (keyIsDown(68)) this.moveRight();    // Touche D
+        }
+    }
+
+    // Déplacement avec le joystick
+    moveWithJoystick() {
+        let moveX = this.joystick.valX;  // Valeur entre -1 et 1 (gauche/droite)
+        let moveY = this.joystick.valY;  // Valeur entre -1 et 1 (haut/bas)
+
+        // Appliquer la vitesse dans la direction du joystick
+        this.pos.x += moveX * this.speed; // Déplacer selon l'axe horizontal
+        this.pos.y += moveY * this.speed; // Déplacer selon l'axe vertical
     }
 
     moveForward() {
@@ -83,15 +103,15 @@ class Ship {
         let rightDir = p5.Vector.fromAngle(this.angle + PI / 2).mult(this.speed);
         this.pos.add(rightDir);
     }
-
-    edges() {
-        this.pos.x = (this.pos.x + width) % width;
-        this.pos.y = (this.pos.y + height) % height;
-    }
-
-    // Normalize angles to always stay between -PI and PI
+    
     normalizeAngle(angle) {
         return angle % TWO_PI;
+    }
+
+    edges() {
+        // Bordures de l'écran (wrap around)
+        this.pos.x = (this.pos.x + width) % width;
+        this.pos.y = (this.pos.y + height) % height;
     }
 
     drawBaseShip() {
@@ -99,7 +119,7 @@ class Ship {
 
         push();
         translate(this.pos.x, this.pos.y);
-        rotate(this.angle); // Rotate the ship according to the current angle
+        rotate(this.angle); // Rotation du vaisseau
 
         fill(settings.colorShip);
         stroke(255);
@@ -109,26 +129,22 @@ class Ship {
 
         this.leftCannon.draw();
         this.rightCannon.draw();
-
-
-
     }
-
 
     draw() {
         this.drawBaseShip();
-        stroke(255, 0, 0)
-        line(this.pos.x, this.pos.y, this.cursor.x, this.cursor.y)
+        stroke(255, 0, 0);
+        line(this.pos.x, this.pos.y, this.cursor.x, this.cursor.y);
         this.displayHealth();
 
         this.bullets.forEach(bullet => {
-            bullet.update()
-            bullet.display()
-        })
+            bullet.update();
+            bullet.display();
+        });
 
         this.bullets = this.bullets.filter(bullet => {
-            return bullet.lifespan > 0 && !bullet.isOffScreen()
-        })
+            return bullet.lifespan > 0 && !bullet.isOffScreen();
+        });
     }
 
     displayHealth() {
