@@ -58,7 +58,7 @@ function backgroundGrid() {
 
 // Fonction pour initialiser les joysticks
 function handleJoysticks() {
-    const joystickSize = min(width, height) / 5;  // 20% de la taille la plus petite de l'écran
+    const joystickSize = min(width, height) / 2.5;  // 20% de la taille la plus petite de l'écran
 
     // Créer et configurer les deux joysticks
     j1 = createJoystick("Déplacement", width / 10, height - joystickSize - 20, joystickSize, joystickSize, -1, 1, 1, -1);

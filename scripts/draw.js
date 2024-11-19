@@ -94,7 +94,11 @@ function menuWaves() {
     background(30);
     fill(255);
     textSize(width / 50);
-    text("Press Space to start", width / 2 - textWidth("Press Space to start") / 2, height / 6);
+    if (!mobile) {
+        text("Appuyez sur espace pour commencer", width / 2 - textWidth("Appuyez sur espace pour commencer") / 2, height / 6);
+    } else {
+        text("Touchez l'écran pour commencer", width / 2 - textWidth("Touchez l'écran pour commencer") / 2, height / 6);
+    }
     let size = min(width, height) / 15;
     let centerX = width / 2;
     let centerY = height / 2;

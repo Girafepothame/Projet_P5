@@ -53,8 +53,8 @@ let buttonPause
 
 function preload() {
     mouseImage = loadImage("assets/Img/mouse.svg")
-    joystickLeft = loadImage("assets/Img/joystickLeft.svg")
-    joystickRight = loadImage("assets/Img/joystickRight.svg")
+    joystickLeft = loadImage("assets/Img/joystick.png")
+    joystickRight = loadImage("assets/Img/joystick.png")
 
     assets.font = loadFont('assets/fonts/menu.ttf');
 
@@ -140,37 +140,40 @@ function showControls(size, centerX, centerY) {
     let spacing = size * 2
     let imgSize = size * 1.5
 
-    // Sur pc 
-    drawKey(centerX, centerY - spacing, size, "Z", "Avancer")
-    drawKey(centerX - spacing, centerY, size, "Q", "Gauche")
-    drawKey(centerX, centerY, size, "S", "Reculer")
-    drawKey(centerX + spacing, centerY, size, "D", "Droite")
+    if (!mobile) {
 
-    drawKey(centerX + spacing, centerY - spacing * 2, size, "P", "Pause")
+        // Sur pc 
+        drawKey(centerX, centerY - spacing, size, "Z", "Avancer")
+        drawKey(centerX - spacing, centerY, size, "Q", "Gauche")
+        drawKey(centerX, centerY, size, "S", "Reculer")
+        drawKey(centerX + spacing, centerY, size, "D", "Droite")
 
-
-    image(mouseImage, centerX - imgSize/4, centerY + spacing*1.5, imgSize, imgSize)
-
-
-    textSize(size / 6)
-
-    fill(255)
-    text("Viser avec la souris", centerX - textWidth("Viser avec la souris")/3, centerY + spacing*1.5 + imgSize*1.2)
-
-    // Sur mobile
-    //image(joystickLeft, centerX - centerX/2, centerY, imgSize, imgSize)
-    //textSize(size/6)
-    //fill(255)
-    //text("Joystick gauche", centerX - centerX/2 - textWidth("Joystick gauche")/4, centerY - imgSize/3)
-    //text("Déplacement vaisseau", centerX - centerX/2 - textWidth("Déplacement vaisseau")/3, centerY + imgSize*1.2)
+        drawKey(centerX + spacing, centerY - spacing * 2, size, "P", "Pause")
 
 
+        image(mouseImage, centerX - imgSize / 4, centerY + spacing * 1.5, imgSize, imgSize)
 
-    //image(joystickRight, centerX + centerX/2, centerY, imgSize, imgSize)
-    //textSize(size/6)
-    //fill(255)
-    //text("Joystick droit", centerX + centerX/2 - textWidth("Joystick droit")/4, centerY - imgSize/3)
-    //text("Orientation vaisseau", centerX + centerX/2 - textWidth("Orientation vaisseau")/3, centerY + imgSize*1.2)
+
+        textSize(size / 6)
+
+        fill(255)
+        text("Viser avec la souris", centerX - textWidth("Viser avec la souris") / 3, centerY + spacing * 1.5 + imgSize * 1.2)
+    } else {
+        // Sur mobile
+        image(joystickLeft, centerX - centerX / 2, centerY, imgSize, imgSize)
+        textSize(size / 6)
+        fill(255)
+        text("Joystick gauche", centerX - centerX / 2 - textWidth("Joystick gauche") / 4, centerY - imgSize / 3)
+        text("Déplacement vaisseau", centerX - centerX / 2 - textWidth("Déplacement vaisseau") / 3, centerY + imgSize * 1.2)
+
+
+
+        image(joystickRight, centerX + centerX / 2, centerY, imgSize, imgSize)
+        textSize(size / 6)
+        fill(255)
+        text("Joystick droit", centerX + centerX / 2 - textWidth("Joystick droit") / 4, centerY - imgSize / 3)
+        text("Orientation vaisseau", centerX + centerX / 2 - textWidth("Orientation vaisseau") / 3, centerY + imgSize * 1.2)
+    }
 
 }
 
@@ -328,7 +331,7 @@ function draw() {
             break;
         case 1: // Menu des vagues
 
-            if (keyIsDown(32) || mobile) {  // space
+            if (keyIsDown(32)) {  // space
                 startGameWave()
                 settings.mode = 2
             }
@@ -370,6 +373,11 @@ function draw() {
 
 
 function touchStarted() {
+    if (settings.mode == 1) {
+        startGameWave()
+        settings.mode = 2
+    }
+
     if (getAudioContext().state !== 'running') {
         getAudioContext().resume();
         playSong();
